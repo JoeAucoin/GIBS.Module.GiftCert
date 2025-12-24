@@ -10,11 +10,26 @@
 
 <form @ref="form" class="@(validated ? " was-validated" : "needs-validation")" novalidate>
     <div class="container">
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" HelpText="PayPal Payment Status" ResourceKey="Code">Payment Status: </Label>
+            <div class="col-sm-9 fs-3 @(_giftCert.PaypalPaymentState == "PAID" ? "text-success" : "text-danger")">
+                @_giftCert.PaypalPaymentState
+            </div>
+        </div>
 
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="isProcessed" HelpText="Has this been processed?" ResourceKey="IsProcessed">Processed: </Label>
+            <div class="col-sm-9">
+                <select id="isProcessed" class="form-select" value="@_giftCert.isProcessed.ToString()" @onchange="(e) => _giftCert.isProcessed = bool.Parse(e.Value.ToString())">
+                    <option value="True">Yes</option>
+                    <option value="False">No</option>
+                </select>
+            </div>
+        </div>
         <div class="row mb-1 align-items-center">
             <Label Class="col-sm-3" For="amount" HelpText="Enter the certificate amount" ResourceKey="CertAmount">Amount: </Label>
             <div class="col-sm-9">
-                <input id="amount" type="number" class="form-control" @bind="@_giftCert.CertAmount" required />
+                <input id="amount" type="number" step=".01" class="form-control" @bind="@_giftCert.CertAmount" required />
             </div>
         </div>
 
@@ -101,16 +116,6 @@
         <hr class="my-3" />
         <h5>Details & Payment</h5>
         <div class="row mb-1 align-items-center">
-            <Label Class="col-sm-3" For="isProcessed" HelpText="Has this been processed?" ResourceKey="IsProcessed">Processed: </Label>
-            <div class="col-sm-9">
-                <select id="isProcessed" class="form-select" value="@_giftCert.isProcessed.ToString()" @onchange="(e) => _giftCert.isProcessed = bool.Parse(e.Value.ToString())">
-                    <option value="True">Yes</option>
-                    <option value="False">No</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row mb-1 align-items-center">
             <Label Class="col-sm-3" For="paymentState" HelpText="PayPal Payment State" ResourceKey="PaypalPaymentState">Payment State: </Label>
             <div class="col-sm-9">
                 <input id="paymentState" class="form-control" @bind="@_giftCert.PaypalPaymentState" />
@@ -134,7 +139,8 @@
     </div>
     <br />
     <button type="button" class="btn btn-success" @onclick="Save">@Localizer["Save"]</button>
-    <NavLink class="btn btn-secondary" href="@NavigateUrl()">@Localizer["Cancel"]</NavLink>
+    <ActionLink Action="List" Class="btn btn-secondary" Security="SecurityAccessLevel.Edit" Text="Return" ResourceKey="Cancel" />
+    
     <br /><br />
     @if (PageState.Action == "Edit")
     {
@@ -197,7 +203,9 @@
                     await GiftCertService.UpdateGiftCertAsync(_giftCert);
                     await logger.LogInformation("GiftCert Updated {GiftCert}", _giftCert);
                 }
-                NavigationManager.NavigateTo(NavigateUrl());
+
+                NavigationManager.NavigateTo(ReturnUrl());
+
             }
             else
             {
@@ -209,5 +217,10 @@
             await logger.LogError(ex, "Error Saving GiftCert {Error}", ex.Message);
             AddModuleMessage(Localizer["Message.SaveError"], MessageType.Error);
         }
+    }
+
+    private string ReturnUrl()
+    {
+        return (!string.IsNullOrEmpty(NavigateUrl() + "/*/" + ModuleState.ModuleId + "/List")) ? NavigateUrl() + "/*/" + ModuleState.ModuleId + "/List" : NavigateUrl();
     }
 }

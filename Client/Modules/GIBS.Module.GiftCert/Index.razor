@@ -178,8 +178,7 @@
     private bool _PayPalSandboxMode;
 
     private string _ClientId;       
-    private string _ClientSecret;
-    private string _PayPalPayee;
+
 
 
 
@@ -187,7 +186,6 @@
     {
         new Resource { ResourceType = ResourceType.Stylesheet, Url = "_content/GIBS.Module.GiftCert/Module.css" },
         new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = "_content/GIBS.Module.GiftCert/Module.js?v=1.7" }
-  //    ,  new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = "https://www.paypal.com/sdk/js?locale=en_US&client-id=" + GetClientId() + "&currency=USD", Location = ResourceLocation.Body }
 
     };
 
@@ -202,14 +200,10 @@
             if(_PayPalSandboxMode)
             {
                 _ClientId = SettingService.GetSetting(settings, "PayPalSandboxClientId", "");
-                _ClientSecret = SettingService.GetSetting(settings, "PayPalSandboxClientSecret", "");
-                _PayPalPayee = SettingService.GetSetting(settings, "PayPalSandboxPayee", "");
             }
             else
             {
                 _ClientId = SettingService.GetSetting(settings, "OAuthClientId", "");
-                _ClientSecret = SettingService.GetSetting(settings, "OAuthClientSecret", "");
-                _PayPalPayee = SettingService.GetSetting(settings, "PayPalPayee", "");
             }
 
 

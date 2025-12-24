@@ -12,10 +12,7 @@
     <p><em>Loading...</em></p>
 }
 else
-{
-    <ActionLink Action="Add" Security="SecurityAccessLevel.Edit" Text="Add GiftCert" ResourceKey="Add" />
-    <br />
-    <br />
+{ 
     @if (@_GiftCerts.Count != 0)
     {
         <Pager Items="@SortedGiftCerts">

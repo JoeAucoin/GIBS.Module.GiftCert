@@ -133,10 +133,10 @@
     <value>Delete GiftCert</value>
   </data>
   <data name="Delete.Message" xml:space="preserve">
-    <value>Are You Sure You Wish To Delete This GiftCert?</value>
+    <value>Are You Sure You Wish To Delete This Gift Certificate?</value>
   </data>
   <data name="Message.DisplayNone" xml:space="preserve">
-    <value>No GiftCerts To Display</value>
+    <value>No Gift Certificates To Display</value>
   </data>
   <data name="Message.LoadError" xml:space="preserve">
     <value>Error Loading GiftCert</value>
