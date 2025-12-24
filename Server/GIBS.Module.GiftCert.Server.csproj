@@ -33,6 +33,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="MailKit">
+      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\MimeKit.dll</HintPath>
+    </Reference>
     <Reference Include="Oqtane.Server"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Server.dll</HintPath></Reference>
     <Reference Include="Oqtane.Shared"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Shared.dll</HintPath></Reference>
   </ItemGroup>

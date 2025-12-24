@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Oqtane.Enums;
 using Oqtane.Infrastructure;
 using Oqtane.Models;
+using Oqtane.Repository;
 using Oqtane.Security;
 using Oqtane.Shared;
 using PaypalServerSdk.Standard;
@@ -12,9 +13,12 @@ using PaypalServerSdk.Standard.Controllers;
 using PaypalServerSdk.Standard.Models;
 using System.Collections.Generic;
 using System.Linq;
+//using System.Net.Mail;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Oqtane.Repository;
+using MimeKit;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 
 namespace GIBS.Module.GiftCert.Services
 {
@@ -245,5 +249,57 @@ namespace GIBS.Module.GiftCert.Services
                 throw;
             }
         }
+
+        public async Task SendHtmlEmailAsync(string recipientName, string recipientEmail, string bccName, string bccEmail, string subject, string htmlMessage)
+        {
+            // Retrieve Site Settings
+            //await SettingService.GetSiteSettingsAsync(PageState.Site.SiteId);
+          //  var settings = _settings.GetSettings(,_alias.SiteId).ToList();
+            var settings = _settings.GetSettings(EntityNames.Site, _alias.SiteId, EntityNames.Host, -1).ToList();
+
+            string GetSetting(string key, string defaultValue) =>
+                settings.FirstOrDefault(s => s.SettingName == key)?.SettingValue ?? defaultValue;
+
+            string smtpHost = GetSetting("SMTPHost", "");
+            int smtpPort = int.Parse(GetSetting("SMTPPort", "587"));
+            string smtpUserName = GetSetting("SMTPUsername", "");
+            string smtpPassword = GetSetting("SMTPPassword", "");
+            string smtpSSL = GetSetting("SMTPSSL", "false"); // Oqtane often has this setting
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Webmaster", smtpUserName));
+            message.To.Add(new MailboxAddress(recipientName, recipientEmail));
+
+            if (!string.IsNullOrEmpty(bccEmail))
+            {
+                message.Bcc.Add(new MailboxAddress(bccName, bccEmail));
+            }
+
+            message.Subject = subject;
+
+            var bodyBuilder = new BodyBuilder
+            {
+                HtmlBody = htmlMessage,
+                TextBody = "Please view this email in a client that supports HTML."
+            };
+
+            message.Body = bodyBuilder.ToMessageBody();
+
+            using var client = new SmtpClient();
+            client.CheckCertificateRevocation = false;
+
+            // Connect
+            await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.Auto);
+
+            // Authenticate
+            if (!string.IsNullOrEmpty(smtpUserName) && !string.IsNullOrEmpty(smtpPassword))
+            {
+                await client.AuthenticateAsync(smtpUserName, smtpPassword);
+            }
+
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
+        }
+
     }
 }

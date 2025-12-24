@@ -110,5 +110,19 @@ namespace GIBS.Module.GiftCert.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             }
         }
+
+        [HttpPost("SendEmail")]
+        [Authorize(Policy = PolicyNames.ViewModule)] // Allows unauthenticated users (e.g. guest checkout) to trigger the email
+        public async Task SendEmail([FromBody] Models.EmailRequest request)
+        {
+            await _GiftCertService.SendHtmlEmailAsync(
+                request.RecipientName,
+                request.RecipientEmail,
+                request.BccName,
+                request.BccEmail,
+                request.Subject,
+                request.HtmlMessage
+            );
+        }
     }
 }

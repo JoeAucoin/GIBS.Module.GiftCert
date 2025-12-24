@@ -32,7 +32,8 @@ namespace GIBS.Module.GiftCert.Services
         // Update the return type to string
         Task<string> CapturePayPalOrderAsync(string orderId, int moduleId);
 
-
+        // NEW METHOD
+        Task SendHtmlEmailAsync(string recipientName, string recipientEmail, string bccName, string bccEmail, string subject, string htmlMessage);
     }
 
     public class GiftCertService : ServiceBase, IGiftCertService
@@ -94,6 +95,21 @@ namespace GIBS.Module.GiftCert.Services
             var response = await client.PostAsync(url, null);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task SendHtmlEmailAsync(string recipientName, string recipientEmail, string bccName, string bccEmail, string subject, string htmlMessage)
+        {
+            var request = new EmailRequest
+            {
+                RecipientName = recipientName,
+                RecipientEmail = recipientEmail,
+                BccName = bccName,
+                BccEmail = bccEmail,
+                Subject = subject,
+                HtmlMessage = htmlMessage
+            };
+
+            await PostJsonAsync($"{Apiurl}/SendEmail", request);
         }
 
     }

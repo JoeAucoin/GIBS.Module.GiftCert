@@ -236,72 +236,72 @@
         }
     }
 
-    private string GetClientId()
-    {
-        if (ModuleState?.Settings != null)
-        {
-            var sandboxMode = bool.Parse(SettingService.GetSetting(ModuleState.Settings, "PayPalSandboxMode", "true"));
-            return sandboxMode
-                ? SettingService.GetSetting(ModuleState.Settings, "PayPalSandboxClientId", "")
-                : SettingService.GetSetting(ModuleState.Settings, "OAuthClientId", "");
-        }
-        return "nosettingsgotten";
-    }
+    // private string GetClientId()
+    // {
+    //     if (ModuleState?.Settings != null)
+    //     {
+    //         var sandboxMode = bool.Parse(SettingService.GetSetting(ModuleState.Settings, "PayPalSandboxMode", "true"));
+    //         return sandboxMode
+    //             ? SettingService.GetSetting(ModuleState.Settings, "PayPalSandboxClientId", "")
+    //             : SettingService.GetSetting(ModuleState.Settings, "OAuthClientId", "");
+    //     }
+    //     return "nosettingsgotten";
+    // }
 
 
-    private async Task SendHtmlEmailAsync(string recipientEmail, string subject, string htmlMessage)
-    {
-        var hostSettings = await SettingService.GetSiteSettingsAsync(PageState.Site.SiteId);
+    // private async Task OLDSendHtmlEmailAsync(string recipientEmail, string subject, string htmlMessage)
+    // {
+    //     var hostSettings = await SettingService.GetSiteSettingsAsync(PageState.Site.SiteId);
 
-        if (hostSettings.TryGetValue("SMTPHost", out var smtpHost))
-        {
-            SmptHost = smtpHost;
-        }
+    //     if (hostSettings.TryGetValue("SMTPHost", out var smtpHost))
+    //     {
+    //         SmptHost = smtpHost;
+    //     }
 
-        if (hostSettings.TryGetValue("SMTPPort", out var smtpPort) && int.TryParse(smtpPort, out var parsedPort))
-        {
-            SmptPort = parsedPort;
-        }
+    //     if (hostSettings.TryGetValue("SMTPPort", out var smtpPort) && int.TryParse(smtpPort, out var parsedPort))
+    //     {
+    //         SmptPort = parsedPort;
+    //     }
 
-        if (hostSettings.TryGetValue("SMTPUsername", out var smtpUserName))
-        {
-            SmptUserName = smtpUserName;
-        }
+    //     if (hostSettings.TryGetValue("SMTPUsername", out var smtpUserName))
+    //     {
+    //         SmptUserName = smtpUserName;
+    //     }
 
-        if (hostSettings.TryGetValue("SMTPPassword", out var smtpPassword))
-        {
-            SmptPassword = smtpPassword;
-        }
+    //     if (hostSettings.TryGetValue("SMTPPassword", out var smtpPassword))
+    //     {
+    //         SmptPassword = smtpPassword;
+    //     }
 
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Webmaster", SmptUserName));
-        message.To.Add(new MailboxAddress("Recipient Name", recipientEmail));
-        message.Subject = subject;
-        message.ReplyTo.Add(new MailboxAddress(_giftCert.FromName, _giftCert.FromEmail));
-        message.Bcc.Add(new MailboxAddress("Webmaster Account", "joseph.m.aucoin@gmail.com"));
+    //     var message = new MimeMessage();
+    //     message.From.Add(new MailboxAddress("Webmaster", SmptUserName));
+    //     message.To.Add(new MailboxAddress("Recipient Name", recipientEmail));
+    //     message.Subject = subject;
+    //     message.ReplyTo.Add(new MailboxAddress(_giftCert.FromName, _giftCert.FromEmail));
+    //     message.Bcc.Add(new MailboxAddress("Webmaster Account", "joseph.m.aucoin@gmail.com"));
 
-        var bodyBuilder = new BodyBuilder
-        {
-            HtmlBody = htmlMessage,
-            TextBody = "This is the plain text alternative."
-        };
+    //     var bodyBuilder = new BodyBuilder
+    //     {
+    //         HtmlBody = htmlMessage,
+    //         TextBody = "This is the plain text alternative."
+    //     };
 
-        message.Body = bodyBuilder.ToMessageBody();
+    //     message.Body = bodyBuilder.ToMessageBody();
 
-        using var client = new SmtpClient
-        {
-            CheckCertificateRevocation = false
-        };
+    //     using var client = new SmtpClient
+    //     {
+    //         CheckCertificateRevocation = false
+    //     };
 
-        await client.ConnectAsync(SmptHost, SmptPort, SecureSocketOptions.Auto);
-        await client.AuthenticateAsync(SmptUserName, SmptPassword);
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
-    }
+    //     await client.ConnectAsync(SmptHost, SmptPort, SecureSocketOptions.Auto);
+    //     await client.AuthenticateAsync(SmptUserName, SmptPassword);
+    //     await client.SendAsync(message);
+    //     await client.DisconnectAsync(true);
+    // }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        
+
         await base.OnAfterRenderAsync(firstRender);      
 
         if (!_pendingPayPalInit ||
@@ -324,7 +324,7 @@
     }
 
 
-    
+
     private async Task InitializePayPalButtonsAsync()
     {
         _dotNetRef ??= DotNetObjectReference.Create(this);
@@ -364,7 +364,7 @@
                 await logger.LogInformation("Gift Certificate Added {GiftCert}", newCert);
                 AddModuleMessage(Localizer["Message.SaveSuccess"], MessageType.Success);
                 _ShowFormFields = false;
-               
+
             }
             else
             {
@@ -373,10 +373,12 @@
                 AddModuleMessage(Localizer["Message.UpdateSuccess"], MessageType.Success);
             }
 
-            await SendHtmlEmailAsync(
-                "joseph.m.aucoin@gmail.com",
-                "Gift Certificate Created",
-                $"<h1>Your gift certificate for ${_giftCert.CertAmount:F2} has been created successfully.</h1>");
+            // await SendHtmlEmailAsync(
+            //     "joseph.m.aucoin@gmail.com",
+            //     "Gift Certificate Created",
+            //     $"<h1>Your gift certificate for ${_giftCert.CertAmount:F2} has been created successfully.</h1>");
+            // UPDATED CALL
+          
 
             _pendingPayPalInit = true;
             await InvokeAsync(StateHasChanged);
@@ -481,6 +483,13 @@
 
                 var updateCert = await GiftCertService.UpdateGiftCertAsync(_giftCert);
 
+                await GiftCertService.SendHtmlEmailAsync(
+                  _giftCert.FromName,               // Recipient Name
+                  _giftCert.FromEmail,            // Recipient Email (or wherever you want it to go)
+                  "Webmaster Account",            // BCC Name
+                  "joe@seashoreproperties.com",    // BCC Email
+                  "Gift Certificate Created for " + _giftCert.ToName,     // Subject
+                  $"<h1>Your gift certificate for ${_giftCert.CertAmount:F2} to {_giftCert.ToName} has been created successfully.</h1>"); // Body
 
                 // Hide the PayPal buttons and show a success message
                 var interop = new Oqtane.UI.Interop(JSRuntime);
