@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Version>1.0.0</Version>
+    <Authors>GIBS</Authors>
+    <Company>GIBS</Company>
+    <Description>Gift Certificate</Description>
+    <Product>GIBS.Module.GiftCert</Product>
+    <Copyright>GIBS</Copyright>
+    <AssemblyName>GIBS.Module.GiftCert.Client.Oqtane</AssemblyName>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
+    <PackageReference Include="System.Net.Http.Json" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\GIBS.Module.GiftCert.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MailKit">
+      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Oqtane.Client"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Client.dll</HintPath></Reference>
+    <Reference Include="Oqtane.Shared"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Shared.dll</HintPath></Reference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- there may be other elements here -->
+    <BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>

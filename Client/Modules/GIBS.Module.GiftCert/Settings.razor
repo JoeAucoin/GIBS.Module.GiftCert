@@ -1,0 +1,300 @@
+@using Oqtane.Shared
+@using Oqtane.Services
+@using Oqtane.Models
+@using Oqtane.Modules
+@using Oqtane.Providers
+@using Oqtane.Interfaces
+
+@namespace GIBS.Module.GiftCert
+@inherits ModuleBase
+@inject ISettingService SettingService
+@inject IStringLocalizer<Settings> Localizer
+@inject IRoleService RoleService
+@inject IFolderService FolderService
+
+<div class="container">
+   
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="payPalSandboxMode" HelpText="payPalSandboxMode" ResourceKey="PayPalSandboxMode" ResourceType="@resourceType">PayPal Sandbox Mode: </Label>
+            <div class="col-sm-9">
+            <input type="checkbox" id="payPalSandboxMode" class="form-check-input" @bind="@_PayPalSandboxMode" />
+            </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <h5 class="mb-3">Sandbox Credentials</h5>
+    <div class="row mb-1">
+        <Label Class="col-sm-3" For="sandboxPayee" HelpText="Enter your PayPal Sandbox Payee." ResourceKey="SandboxPayee">Sandbox Payee: </Label>
+        <div class="col-sm-9">
+            <input id="sandboxPayee" class="form-control" @bind="@_payPalSandboxPayee" />
+        </div>
+    </div>
+    <div class="row mb-1">
+        <Label Class="col-sm-3" For="sandboxClientId" HelpText="Enter your PayPal Sandbox Client ID." ResourceKey="SandboxClientId">Sandbox Client ID: </Label>
+        <div class="col-sm-9">
+            <input id="sandboxClientId" class="form-control" @bind="@_payPalSandboxClientId" />
+        </div>
+    </div>
+    <div class="row mb-1">
+        <Label Class="col-sm-3" For="sandboxClientSecret" HelpText="Enter your PayPal Sandbox Client Secret." ResourceKey="SandboxClientSecret">Sandbox Client Secret: </Label>
+        <div class="col-sm-9">
+            <input id="sandboxClientSecret" class="form-control" @bind="@_payPalSandboxClientSecret" />
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <h5 class="mb-3">Production Credentials</h5>
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="payPalPayee" HelpText="Enter your OAuthClientId" ResourceKey="PayPalPayee" ResourceType="@resourceType">PayPal Payee: </Label>
+        <div class="col-sm-9">
+            <input id="payPalPayee" type="text" class="form-control" @bind="@_PayPalPayee" />
+        </div>
+    </div>
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="oAuthClientId" HelpText="Enter your OAuthClientId" ResourceKey="OAuthClientId" ResourceType="@resourceType">PayPal OAuthClientId: </Label>
+        <div class="col-sm-9">
+            <input id="oAuthClientId" type="text" class="form-control" @bind="@_OAuthClientId" />
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="oAuthClientSecret" HelpText="Enter Records Per Page" ResourceKey="OAuthClientSecret" ResourceType="@resourceType">PayPal OAuthClientSecret: </Label>
+        <div class="col-sm-9">
+            <input id="oAuthClientSecret" type="text" class="form-control" @bind="@_OAuthClientSecret" />
+        </div>
+    </div>
+
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="moduleInstructions" HelpText="Enter module instructions" ResourceKey="ModuleInstructions" ResourceType="@resourceType">Module Instructions: </Label>
+        <div class="col-sm-9">
+            <textarea id="moduleInstructions" class="form-control" @bind="@_ModuleInstructions" rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="folderList" HelpText="Select the file folder" ResourceKey="FileFolder" ResourceType="@resourceType">PDF Folder: </Label>
+        <div class="col-sm-9">
+            <select id="folderList" class="form-select" @bind="@_FileFolder">
+                @foreach (Folder folder in _folders)
+                {
+                    <option value="@(folder.FolderId)">@(new string('-', folder.Level * 2))@(folder.Name)</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="numPerPage" HelpText="Enter Records Per Page" ResourceKey="NumPerPage" ResourceType="@resourceType">Records Per Page: </Label>
+        <div class="col-sm-9">
+            <input id="numPerPage" type="text" class="form-control" @bind="@_NumPerPage" />
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="certBannerText" HelpText="Enter Email From Address" ResourceKey="CertBannerText" ResourceType="@resourceType">Certificate Banner Text: </Label>
+        <div class="col-sm-9">
+            <input id="certBannerText" type="text" class="form-control" @bind="@_CertBannerText" />
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="certFooterText" HelpText="Enter certificate footer text" ResourceKey="CertFooterText" ResourceType="@resourceType">Certificate Footer Text: </Label>
+        <div class="col-sm-9">
+            <textarea id="certFooterText" class="form-control" @bind="@_CertFooterText" rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="certWatermark" HelpText="Enter certificate watermark text" ResourceKey="CertWatermark" ResourceType="@resourceType">Certificate Watermark Text: </Label>
+        <div class="col-sm-9">
+            <input id="certWatermark" type="text" class="form-control" @bind="@_CertWatermark" />
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="certLogo" HelpText="Enter Certificate Logo" ResourceKey="CertLogo" ResourceType="@resourceType">Certificate Logo: </Label>
+        <div class="col-sm-9">
+            <input id="certLogo" type="text" class="form-control" @bind="@_CertLogo" />
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="certReturnAddress" HelpText="Enter Certificate Return Address" ResourceKey="CertReturnAddress" ResourceType="@resourceType">Company Return Address: </Label>
+        <div class="col-sm-9">
+            <textarea id="certReturnAddress" class="form-control" @bind="@_CertReturnAddress" rows="3"></textarea>
+        </div>
+    </div>
+
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="emailFrom" HelpText="Enter Email From Address" ResourceKey="EmailFrom" ResourceType="@resourceType">Email From Address: </Label>
+        <div class="col-sm-9">
+            <input id="emailFrom" type="text" class="form-control" @bind="@_EmailFrom" />
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="emailNotify" HelpText="Enter EmailNotify Address" ResourceKey="EmailNotify" ResourceType="@resourceType">Email Notify Address: </Label>
+        <div class="col-sm-9">
+            <input id="emailNotify" type="text" class="form-control" @bind="@_EmailNotify" />
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="emailSubject" HelpText="Enter Email Subject" ResourceKey="EmailSubject" ResourceType="@resourceType">Email Subject: </Label>
+        <div class="col-sm-9">
+            <input id="emailSubject" type="text" class="form-control" @bind="@_EmailSubject" />
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="specialInstructions" HelpText="Enter any special instructions" ResourceKey="SpecialInstructions" ResourceType="@resourceType">Special Instructions: </Label>
+        <div class="col-sm-9">
+            <textarea id="specialInstructions" class="form-control" @bind="@_SpecialInstructions" rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="addUserRole" HelpText="Select the add user role" ResourceKey="AddUserRole" ResourceType="@resourceType">Add User Role: </Label>
+        <div class="col-sm-9">
+            <select id="addUserRole" class="form-select" @bind="@_AddUserRole">
+                @foreach (Role role in _roles)
+                {
+                    <option value="@(role.Name)">@(role.Name)</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="manageUserRole" HelpText="Select the manager user role" ResourceKey="ManageUserRole" ResourceType="@resourceType">Manager User Role: </Label>
+        <div class="col-sm-9">
+            <select id="manageUserRole" class="form-select" @bind="@_ManageUserRole">
+                @foreach (Role role in _roles)
+                {
+                    <option value="@(role.Name)">@(role.Name)</option>
+                }
+            </select>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    private string resourceType = "GIBS.Module.GiftCert.Settings, GIBS.Module.GiftCert.Client.Oqtane"; // for localization
+    public override string Title => "GiftCert Settings";
+
+    private string _PayPalPayee;
+    private bool _PayPalSandboxMode;
+    private string _NumPerPage;
+    private string _RedirectPage;
+    private string _EmailFrom;
+    private string _EmailNotify;
+    private string _EmailSubject;
+    private string _ModuleInstructions;
+    private string _CertBannerText;
+    private string _CertFooterText;
+    private string _CertWatermark;
+    private string _CertLogo;
+    private string _SpecialInstructions;
+    private string _AddUserRole;
+    private string _ManageUserRole;
+    private string _CertReturnAddress;
+    private string _OAuthClientId;
+    private string _OAuthClientSecret;
+    private string _payPalSandboxClientId;
+    private string _payPalSandboxClientSecret;
+    private string _payPalSandboxPayee;
+
+    private List<Role> _roles { get; set; } = new List<Role>();
+    private List<Folder> _folders = new List<Folder>();
+    private string _FileFolder;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (UserSecurity.IsAuthorized(PageState.User, RoleNames.Host))
+            {
+                _roles = await RoleService.GetRolesAsync(PageState.Site.SiteId, true);
+                _roles.RemoveAll(item => item.Name == RoleNames.Everyone || item.Name == RoleNames.Unauthenticated);
+            }
+            else
+            {
+                _roles = await RoleService.GetRolesAsync(PageState.Site.SiteId);
+                _roles.RemoveAll(item => item.Name == RoleNames.Everyone || item.Name == RoleNames.Unauthenticated);
+            }
+
+            _folders = await FolderService.GetFoldersAsync(PageState.Site.SiteId);
+
+            Dictionary<string, string> settings = await SettingService.GetModuleSettingsAsync(ModuleState.ModuleId);
+            _PayPalPayee = SettingService.GetSetting(settings, "PayPalPayee", "");
+            _payPalSandboxPayee = SettingService.GetSetting(settings, "PayPalSandboxPayee", "");
+            _PayPalSandboxMode = bool.Parse(SettingService.GetSetting(settings, "PayPalSandboxMode", "true"));
+            _payPalSandboxClientId = SettingService.GetSetting(settings, "PayPalSandboxClientId", "");
+            _payPalSandboxClientSecret = SettingService.GetSetting(settings, "PayPalSandboxClientSecret", "");
+            _OAuthClientId = SettingService.GetSetting(settings, "OAuthClientId", "");
+            _OAuthClientSecret = SettingService.GetSetting(settings, "OAuthClientSecret", "");
+            _NumPerPage = SettingService.GetSetting(settings, "NumPerPage", "10");
+            _EmailFrom = SettingService.GetSetting(settings, "EmailFrom", "");
+            _EmailNotify = SettingService.GetSetting(settings, "EmailNotify", "");
+            _EmailSubject = SettingService.GetSetting(settings, "EmailSubject", "You have received a Gift Certificate");
+            _ModuleInstructions = SettingService.GetSetting(settings, "ModuleInstructions", "");
+            _CertBannerText = SettingService.GetSetting(settings, "CertBannerText", "Gift Certificate");
+            _CertFooterText = SettingService.GetSetting(settings, "CertFooterText", "This is a footer text");
+            _CertWatermark = SettingService.GetSetting(settings, "CertWatermark", "Gift Certificate");
+            _CertLogo = SettingService.GetSetting(settings, "CertLogo", "");
+            _SpecialInstructions = SettingService.GetSetting(settings, "SpecialInstructions", "");
+            _AddUserRole = SettingService.GetSetting(settings, "AddUserRole", "");
+            _ManageUserRole = SettingService.GetSetting(settings, "ManageUserRole", "");
+            _CertReturnAddress = SettingService.GetSetting(settings, "CertReturnAddress", "");
+            _FileFolder = SettingService.GetSetting(settings, "FileFolder", "Root");
+
+            
+        }
+        catch (Exception ex)
+        {
+            AddModuleMessage(ex.Message, MessageType.Error);
+        }
+    }
+
+    public async Task UpdateSettings()
+    {
+        try
+        {
+            Dictionary<string, string> settings = await SettingService.GetModuleSettingsAsync(ModuleState.ModuleId);
+            SettingService.SetSetting(settings, "PayPalPayee", _PayPalPayee);
+            SettingService.SetSetting(settings, "PayPalSandboxPayee", _payPalSandboxPayee);
+            SettingService.SetSetting(settings, "PayPalSandboxMode", _PayPalSandboxMode.ToString());
+            SettingService.SetSetting(settings, "PayPalSandboxClientId", _payPalSandboxClientId);
+            SettingService.SetSetting(settings, "PayPalSandboxClientSecret", _payPalSandboxClientSecret);
+            SettingService.SetSetting(settings, "OAuthClientId", _OAuthClientId);
+            SettingService.SetSetting(settings, "OAuthClientSecret", _OAuthClientSecret);
+            SettingService.SetSetting(settings, "NumPerPage", _NumPerPage);
+            SettingService.SetSetting(settings, "EmailFrom", _EmailFrom);
+            SettingService.SetSetting(settings, "EmailNotify", _EmailNotify);
+            SettingService.SetSetting(settings, "EmailSubject", _EmailSubject);
+            SettingService.SetSetting(settings, "ModuleInstructions", _ModuleInstructions);
+            SettingService.SetSetting(settings, "CertBannerText", _CertBannerText);
+            SettingService.SetSetting(settings, "CertFooterText", _CertFooterText);
+            SettingService.SetSetting(settings, "CertWatermark", _CertWatermark);
+            SettingService.SetSetting(settings, "CertLogo", _CertLogo);
+            SettingService.SetSetting(settings, "SpecialInstructions", _SpecialInstructions);
+            SettingService.SetSetting(settings, "AddUserRole", _AddUserRole);
+            SettingService.SetSetting(settings, "ManageUserRole", _ManageUserRole);
+            SettingService.SetSetting(settings, "CertReturnAddress", _CertReturnAddress);
+            SettingService.SetSetting(settings, "FileFolder", _FileFolder);
+
+            await SettingService.UpdateModuleSettingsAsync(settings, ModuleState.ModuleId);
+        }
+        catch (Exception ex)
+        {
+            AddModuleMessage(ex.Message, MessageType.Error);
+        }
+    }
+}

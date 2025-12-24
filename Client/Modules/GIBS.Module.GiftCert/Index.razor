@@ -1,0 +1,549 @@
+@using GIBS.Module.GiftCert.Services
+@using GIBS.Module.GiftCert.Models
+@using System.ComponentModel.DataAnnotations
+@using Oqtane.Modules.Controls
+@using Oqtane.Shared
+@using Oqtane.Services
+@using Oqtane.Modules
+@using Oqtane.Models
+@using Oqtane.Interfaces @* Important for IInterop *@
+@using Oqtane.UI
+@using MimeKit
+@using MailKit.Net.Smtp
+@using MailKit.Security
+@using Microsoft.JSInterop
+@using System.Threading.Tasks
+@using System.Text.Json
+
+@namespace GIBS.Module.GiftCert
+@inherits ModuleBase
+@implements IAsyncDisposable
+@inject IGiftCertService GiftCertService
+@inject NavigationManager NavigationManager
+@inject IUserService UserService
+@inject IStringLocalizer<Index> Localizer
+@inject Oqtane.Services.ISettingService SettingService
+@inject IJSRuntime JS
+@inject Oqtane.Services.IPageService PageService
+
+
+<div><ActionLink Action="List" Security="SecurityAccessLevel.Edit" Text="List GiftCert" ResourceKey="List" /></div>
+<form @ref="form" class="@(validated ? " was-validated" : "needs-validation")" novalidate>
+    <div class="container">
+        @if(_ShowFormFields)
+        {
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="certAmount" HelpText="Enter the certificate amount" ResourceKey="CertAmount">Amount: </Label>
+            <div class="col-sm-9">
+                    <input id="certAmount" type="number" step=".01" class="form-control form-control-lg" @bind="_giftCert.CertAmount" required />
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="toName" HelpText="Enter the recipient's name" ResourceKey="ToName">To Name: </Label>
+            <div class="col-sm-9">
+                <input id="toName" class="form-control form-control-lg" @bind="_giftCert.ToName" required />
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="fromName" HelpText="Enter the sender's name" ResourceKey="FromName">From Name: </Label>
+            <div class="col-sm-9">
+                <input id="fromName" class="form-control form-control-lg" @bind="_giftCert.FromName" required />
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="fromEmail" HelpText="Enter the sender's email" ResourceKey="FromEmail">From Email: </Label>
+            <div class="col-sm-9">
+                <input id="fromEmail" type="email" class="form-control form-control-lg" @bind="_giftCert.FromEmail" required />
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="fromPhone" HelpText="Enter the sender's phone" ResourceKey="FromPhone">From Phone: </Label>
+            <div class="col-sm-9">
+                <input id="fromPhone" type="tel" class="form-control form-control-lg" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" @bind="_giftCert.FromPhone" />
+            </div>
+        </div>
+        }
+        @if(!_ShowFormFields)
+        {
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3"  HelpText="Certificate amount" ResourceKey="CertAmount">Amount: </Label>
+            <div class="col-sm-9 fs-3">
+                    $@_giftCert.CertAmount.ToString("N2")
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3"  HelpText="Recipient's name" ResourceKey="ToName">To Name: </Label>
+                <div class="col-sm-9 fs-3">
+                @_giftCert.ToName
+                </div>
+            </div>
+            <div class="row mb-1 align-items-center">
+                <Label Class="col-sm-3"  HelpText="Sender's name" ResourceKey="FromName">From Name: </Label>
+                <div class="col-sm-9 fs-3">
+                    @_giftCert.FromName
+                </div>
+            </div>
+            <div class="row mb-1 align-items-center">
+                <Label Class="col-sm-3" HelpText="Sender's email" ResourceKey="FromEmail">From Email: </Label>
+                <div class="col-sm-9 fs-3">
+                    @_giftCert.FromEmail
+                </div>
+            </div>
+        }
+        @if(_ShowShippingAddress)
+        {
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailTo" HelpText="Enter the name for mailing" ResourceKey="MailTo">Mail To Name: </Label>
+            <div class="col-sm-9">
+                <input id="mailTo" class="form-control form-control-lg" @bind="_giftCert.MailTo" />
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToAddress" HelpText="Enter the mailing address" ResourceKey="MailToAddress">Mail To Address: </Label>
+            <div class="col-sm-9">
+                <input id="mailToAddress" class="form-control form-control-lg" @bind="_giftCert.MailToAddress" />
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToAddress1" HelpText="Enter additional address info" ResourceKey="MailToAddress1">Address Line 2: </Label>
+            <div class="col-sm-9">
+                <input id="mailToAddress1" class="form-control form-control-lg" @bind="_giftCert.MailToAddress1" />
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToCity" HelpText="Enter the city" ResourceKey="MailToCity">City: </Label>
+            <div class="col-sm-9">
+                <input id="mailToCity" class="form-control form-control-lg" @bind="_giftCert.MailToCity" />
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToState" HelpText="Enter the state" ResourceKey="MailToState">State: </Label>
+            <div class="col-sm-9">
+                <input id="mailToState" class="form-control form-control-lg" @bind="_giftCert.MailToState" />
+            </div>
+        </div>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToZip" HelpText="Enter the ZIP code" ResourceKey="MailToZip">ZIP Code: </Label>
+            <div class="col-sm-9">
+                <input id="mailToZip" class="form-control form-control-lg" @bind="_giftCert.MailToZip" />
+            </div>
+        </div>
+        }
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="notes" HelpText="Enter any notes" ResourceKey="Notes">Notes: </Label>
+            <div class="col-sm-9">
+                <textarea id="notes" class="form-control form-control-lg" @bind="_giftCert.Notes"></textarea>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-sm-9 offset-sm-3">
+
+                <button type="button" class="btn btn-success" @onclick="Save">@Localizer["Save"]</button>
+                <NavLink class="btn btn-secondary" href="@NavigateUrl()">@Localizer["Cancel"]</NavLink>
+            </div>
+        </div>
+        <div id="paypal-button-container" class="paypal-button-container"></div>
+    </div>
+</form>
+
+@code {
+    public override string RenderMode => RenderModes.Interactive;
+
+    private Oqtane.UI.Interop _interop;
+
+    private ElementReference form;
+    private bool validated;
+    private GiftCert _giftCert = new();
+    private int _id = -1;
+    private string SmptHost = "";
+    private int SmptPort = 587;
+    private string SmptUserName = "";
+    private string SmptPassword = "";
+    private DotNetObjectReference<Index>? _dotNetRef;
+    private bool _pendingPayPalInit = true;
+    private bool _scriptRegistered = false;
+    private bool _ShowShippingAddress = false;
+    private bool _ShowFormFields = true;
+    private string _RedirectPage;
+    private string _EmailFrom;
+    private string _EmailNotify;
+    private string _EmailSubject;
+    private string _ModuleInstructions;
+
+    private string _SpecialInstructions;
+
+    private string _CertReturnAddress;
+
+    private bool _PayPalSandboxMode;
+
+    private string _ClientId;       
+    private string _ClientSecret;
+    private string _PayPalPayee;
+
+
+
+    public override List<Resource> Resources => new List<Resource>()
+    {
+        new Resource { ResourceType = ResourceType.Stylesheet, Url = "_content/GIBS.Module.GiftCert/Module.css" },
+        new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = "_content/GIBS.Module.GiftCert/Module.js?v=1.7" }
+  //    ,  new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = "https://www.paypal.com/sdk/js?locale=en_US&client-id=" + GetClientId() + "&currency=USD", Location = ResourceLocation.Body }
+
+    };
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var settings = await SettingService.GetModuleSettingsAsync(ModuleState.ModuleId);
+            _PayPalSandboxMode = bool.Parse(SettingService.GetSetting(settings, "PayPalSandboxMode", "true"));
+            if(_PayPalSandboxMode)
+            {
+                _ClientId = SettingService.GetSetting(settings, "PayPalSandboxClientId", "");
+                _ClientSecret = SettingService.GetSetting(settings, "PayPalSandboxClientSecret", "");
+                _PayPalPayee = SettingService.GetSetting(settings, "PayPalSandboxPayee", "");
+            }
+            else
+            {
+                _ClientId = SettingService.GetSetting(settings, "OAuthClientId", "");
+                _ClientSecret = SettingService.GetSetting(settings, "OAuthClientSecret", "");
+                _PayPalPayee = SettingService.GetSetting(settings, "PayPalPayee", "");
+            }
+
+
+
+            if (PageState.QueryString?.TryGetValue("id", out var idStr) == true &&
+                int.TryParse(idStr, out var parsedId))
+            {
+                _id = parsedId;
+            }
+
+            if (_id != -1 && PageState.User != null)
+            {
+                _giftCert = await GiftCertService.GetGiftCertAsync(_id, ModuleState.ModuleId) ?? new GiftCert();
+            }
+            else
+            {
+                _giftCert = new GiftCert { CertAmount = 25.00M };
+                _giftCert.GiftCertId = 0;
+                if (PageState.User != null)
+                {
+                    _giftCert.FromName = PageState.User.DisplayName;
+                    _giftCert.FromEmail = PageState.User.Email;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Initializing GiftCert Form {Error}", ex.Message);
+            AddModuleMessage(Localizer["Message.LoadError"], MessageType.Error);
+        }
+    }
+
+    private string GetClientId()
+    {
+        if (ModuleState?.Settings != null)
+        {
+            var sandboxMode = bool.Parse(SettingService.GetSetting(ModuleState.Settings, "PayPalSandboxMode", "true"));
+            return sandboxMode
+                ? SettingService.GetSetting(ModuleState.Settings, "PayPalSandboxClientId", "")
+                : SettingService.GetSetting(ModuleState.Settings, "OAuthClientId", "");
+        }
+        return "nosettingsgotten";
+    }
+
+
+    private async Task SendHtmlEmailAsync(string recipientEmail, string subject, string htmlMessage)
+    {
+        var hostSettings = await SettingService.GetSiteSettingsAsync(PageState.Site.SiteId);
+
+        if (hostSettings.TryGetValue("SMTPHost", out var smtpHost))
+        {
+            SmptHost = smtpHost;
+        }
+
+        if (hostSettings.TryGetValue("SMTPPort", out var smtpPort) && int.TryParse(smtpPort, out var parsedPort))
+        {
+            SmptPort = parsedPort;
+        }
+
+        if (hostSettings.TryGetValue("SMTPUsername", out var smtpUserName))
+        {
+            SmptUserName = smtpUserName;
+        }
+
+        if (hostSettings.TryGetValue("SMTPPassword", out var smtpPassword))
+        {
+            SmptPassword = smtpPassword;
+        }
+
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress("Webmaster", SmptUserName));
+        message.To.Add(new MailboxAddress("Recipient Name", recipientEmail));
+        message.Subject = subject;
+        message.ReplyTo.Add(new MailboxAddress(_giftCert.FromName, _giftCert.FromEmail));
+        message.Bcc.Add(new MailboxAddress("Webmaster Account", "joseph.m.aucoin@gmail.com"));
+
+        var bodyBuilder = new BodyBuilder
+        {
+            HtmlBody = htmlMessage,
+            TextBody = "This is the plain text alternative."
+        };
+
+        message.Body = bodyBuilder.ToMessageBody();
+
+        using var client = new SmtpClient
+        {
+            CheckCertificateRevocation = false
+        };
+
+        await client.ConnectAsync(SmptHost, SmptPort, SecureSocketOptions.Auto);
+        await client.AuthenticateAsync(SmptUserName, SmptPassword);
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        
+        await base.OnAfterRenderAsync(firstRender);      
+
+        if (!_pendingPayPalInit ||
+            _giftCert?.GiftCertId <= 0 ||
+            string.IsNullOrWhiteSpace(_giftCert.FromEmail))
+        {
+            return;
+        }
+
+        try
+        {
+            await InitializePayPalButtonsAsync();
+            _pendingPayPalInit = false;
+        }
+        catch (JSException jsEx)
+        {
+            _pendingPayPalInit = true;
+            await logger.LogError(jsEx, "Error initializing PayPal buttons {Error}", jsEx.Message);
+        }
+    }
+
+
+    
+    private async Task InitializePayPalButtonsAsync()
+    {
+        _dotNetRef ??= DotNetObjectReference.Create(this);
+
+        string url = "https://www.paypal.com/sdk/js?client-id=" + _ClientId + "&currency=USD";
+
+        await JSRuntime.InvokeVoidAsync(
+            "GIBS.GiftCert.loadPayPalSdk", url,
+            _dotNetRef);
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            validated = true;
+            var interop = new Oqtane.UI.Interop(JSRuntime);
+            if (!await interop.FormValid(form))
+            {
+                AddModuleMessage(Localizer["Message.SaveValidation"], MessageType.Warning);
+                return;
+            }
+
+            if (_id == -1)
+            {
+                _giftCert.ModuleId = ModuleState.ModuleId;
+                _giftCert.PaypalPaymentState = "NOT-PAID";
+                if (PageState.User != null)
+                {
+                    _giftCert.FromUserID = PageState.User.UserId;
+                }
+                var newCert = await GiftCertService.AddGiftCertAsync(_giftCert);
+
+                _id = newCert.GiftCertId;
+                _giftCert.GiftCertId = newCert.GiftCertId;
+
+                await logger.LogInformation("Gift Certificate Added {GiftCert}", newCert);
+                AddModuleMessage(Localizer["Message.SaveSuccess"], MessageType.Success);
+                _ShowFormFields = false;
+               
+            }
+            else
+            {
+                _giftCert = await GiftCertService.UpdateGiftCertAsync(_giftCert);
+                await logger.LogInformation("Gift Certificate Updated {GiftCert}", _giftCert);
+                AddModuleMessage(Localizer["Message.UpdateSuccess"], MessageType.Success);
+            }
+
+            await SendHtmlEmailAsync(
+                "joseph.m.aucoin@gmail.com",
+                "Gift Certificate Created",
+                $"<h1>Your gift certificate for ${_giftCert.CertAmount:F2} has been created successfully.</h1>");
+
+            _pendingPayPalInit = true;
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Saving Gift Certificate {Error}", ex.Message);
+            AddModuleMessage(Localizer["Message.SaveError"], MessageType.Error);
+        }
+    }
+
+    [JSInvokable]
+    public async Task<string> CreateOrderOnServer()
+    {
+        try
+        {
+            var orderResponse = await GiftCertService.CreatePayPalOrderAsync(_giftCert);
+            if (orderResponse != null && !string.IsNullOrEmpty(orderResponse.OrderId))
+            {
+                await logger.LogInformation("PayPal Order Created On Server with ID: {OrderId}", orderResponse.OrderId);
+                return orderResponse.OrderId;
+            }
+            else
+            {
+                await logger.LogError("Failed to create PayPal order on server.");
+                return string.Empty;
+            }
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Creating PayPal Order On Server {Error}", ex.Message);
+            return string.Empty;
+        }
+    }
+
+    [JSInvokable]
+    public async Task<object> CaptureOrderOnServer(string orderId)
+    {
+        try
+        {
+            var resultJson = await GiftCertService.CapturePayPalOrderAsync(orderId, ModuleState.ModuleId);
+            if (string.IsNullOrEmpty(resultJson))
+            {
+                throw new Exception("Server returned an empty response for order capture.");
+            }
+
+            AddModuleMessage(resultJson, MessageType.Success);
+
+            using var jsonDoc = JsonDocument.Parse(resultJson);
+            var root = jsonDoc.RootElement;
+
+            // The PayPal v2 Orders API returns "status": "COMPLETED" on successful capture.  APPROVED
+            if (root.TryGetProperty("Status", out var statusElement) &&
+              (statusElement.ValueKind == JsonValueKind.String && statusElement.GetString().Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) ||
+               statusElement.ValueKind == JsonValueKind.Number && statusElement.GetInt32() == 4))
+
+            {
+                // get the return PayPal id from json
+                var paypalid = root.GetProperty("Id").GetString();
+                _giftCert.PP_Response = resultJson;
+                _giftCert.PaypalPaymentState = "PAID";
+                _giftCert.isProcessed = false;
+                _giftCert.PP_PaymentId = paypalid;
+
+                // Safely parse the shipping address from the JSON response
+                if (root.TryGetProperty("PurchaseUnits", out var purchaseUnits) && purchaseUnits.GetArrayLength() > 0)
+                {
+                    var firstPurchaseUnit = purchaseUnits[0];
+                    if (firstPurchaseUnit.TryGetProperty("Shipping", out var shipping))
+                    {
+                        if (shipping.TryGetProperty("Name", out var name) && name.TryGetProperty("FullName", out var fullName))
+                        {
+                            _giftCert.MailTo = fullName.GetString();
+                        }
+
+                        if (shipping.TryGetProperty("Address", out var address))
+                        {
+                            if (address.TryGetProperty("AddressLine1", out var addressLine1))
+                            {
+                                _giftCert.MailToAddress = addressLine1.GetString();
+                            }
+                            if (address.TryGetProperty("AddressLine2", out var addressLine2))
+                            {
+                                _giftCert.MailToAddress1 = addressLine2.GetString();
+                            }
+                            if (address.TryGetProperty("AdminArea2", out var city))
+                            {
+                                _giftCert.MailToCity = city.GetString();
+                            }
+                            if (address.TryGetProperty("AdminArea1", out var state))
+                            {
+                                _giftCert.MailToState = state.GetString();
+                            }
+                            if (address.TryGetProperty("PostalCode", out var postalCode))
+                            {
+                                _giftCert.MailToZip = postalCode.GetString();
+                            }
+                        }
+                    }
+                }
+
+
+                var updateCert = await GiftCertService.UpdateGiftCertAsync(_giftCert);
+
+
+                // Hide the PayPal buttons and show a success message
+                var interop = new Oqtane.UI.Interop(JSRuntime);
+
+                await JS.InvokeVoidAsync("eval", "document.getElementById('paypal-button-container').style.display = 'none';");
+
+                 _ShowShippingAddress = true;
+
+                AddModuleMessage(Localizer["Message.PaymentSuccess"], MessageType.Success);
+                await InvokeAsync(StateHasChanged);
+
+                return new { status = "COMPLETED" };
+            }
+            else if (root.TryGetProperty("name", out var errorName) &&
+                     errorName.GetString() == "INSTRUMENT_DECLINED")
+            {
+                await logger.LogWarning("PayPal payment failed: Instrument Declined. Order ID: {OrderId}", orderId);
+                return new { error = "INSTRUMENT_DECLINED" };
+            }
+            else
+            {
+                await logger.LogError("PayPal capture was not completed. Status: {Status}. Response: {Response}",
+                    root.TryGetProperty("status", out var s) ? s.GetString() : "Unknown", resultJson);
+                return string.Empty;
+                //   throw new Exception("PayPal payment could not be completed.");
+            }
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Capturing PayPal Order On Server for Order {OrderId}", orderId);
+            return string.Empty;
+            //  throw; // Re-throw the exception to be caught by the JavaScript caller
+        }
+    }
+
+    [JSInvokable]
+    public async Task PersistPayPalCaptureAsync(string orderId, string transactionId, string status)
+    {
+        _giftCert.PP_PaymentId = transactionId;
+        _giftCert.PaypalPaymentState = status;
+        _giftCert.PP_Response = orderId;
+        _giftCert.isProcessed = string.Equals(status, "COMPLETED", StringComparison.OrdinalIgnoreCase);
+
+        await GiftCertService.UpdateGiftCertAsync(_giftCert);
+        AddModuleMessage(Localizer["Message.PaymentCaptured"], MessageType.Success);
+    }
+
+    private async Task CreateOrderAsync()
+    {
+        var dto = await GiftCertService.CreatePayPalOrderAsync(_giftCert);
+
+
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _dotNetRef?.Dispose();
+        return ValueTask.CompletedTask;
+    }
+}

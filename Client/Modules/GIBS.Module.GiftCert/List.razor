@@ -1,0 +1,99 @@
+﻿@using GIBS.Module.GiftCert.Services
+@using GIBS.Module.GiftCert.Models
+@using System.Linq
+@namespace GIBS.Module.GiftCert
+@inherits ModuleBase
+@inject IGiftCertService GiftCertService
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<List> Localizer
+
+@if (_GiftCerts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ActionLink Action="Add" Security="SecurityAccessLevel.Edit" Text="Add GiftCert" ResourceKey="Add" />
+    <br />
+    <br />
+    @if (@_GiftCerts.Count != 0)
+    {
+        <Pager Items="@SortedGiftCerts">
+            <Header>
+            <th style="width: 1px;">&nbsp;</th>
+            <th style="width: 1px;">&nbsp;</th>
+            <th>@Localizer["FromName"]</th>
+            <th>@Localizer["FromEmail"]</th>
+            <th>@Localizer["ToName"]</th>
+            <th>@Localizer["Amount"]</th>
+            <th>@Localizer["PaypalPaymentState"]</th>
+            <th>@Localizer["isProcessed"]</th>
+            <th>@Localizer["CreatedOn"]</th>
+            </Header>
+            <Row>
+                <td><ActionLink Action="Edit" Parameters="@($"id=" + context.GiftCertId.ToString())" ResourceKey="Edit" /></td>
+                <td><ActionDialog Header="Delete GiftCert" Message="Are You Sure You Wish To Delete This GiftCert?" Action="Delete" Security="SecurityAccessLevel.Edit" Class="btn btn-danger" OnClick="@(async () => await Delete(context))" ResourceKey="Delete" Id="@context.GiftCertId.ToString()" /></td>
+                <td>@context.FromName</td>
+                <td>@context.FromEmail</td>
+                <td>@context.ToName</td>
+                <td>@context.CertAmount</td>
+                <td>@context.PaypalPaymentState</td>
+                <td>@(context.isProcessed? Localizer["Yes"] : Localizer["No"])</td>
+                <td>@context.CreatedOn.ToLocalTime().ToShortDateString() @context.CreatedOn.ToLocalTime().ToShortTimeString()</td>
+            </Row>
+        </Pager>
+    }
+    else
+    {
+        <p>@Localizer["Message.DisplayNone"]</p>
+    }
+}
+
+@code {
+    public override string RenderMode => RenderModes.Interactive;
+    public override SecurityAccessLevel SecurityAccessLevel => SecurityAccessLevel.Edit;
+    public override bool UseAdminContainer => false;
+
+    public override List<Resource> Resources => new List<Resource>()
+    {
+        new Stylesheet("_content/GIBS.Module.GiftCert/Module.css"),
+        new Script("_content/GIBS.Module.GiftCert/Module.js")
+    };
+
+    List<GiftCert> _GiftCerts;
+    private IEnumerable<GiftCert> SortedGiftCerts =>
+       _GiftCerts?
+           .OrderByDescending(item => item.CreatedOn)
+       ?? Enumerable.Empty<GiftCert>();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _GiftCerts = await GiftCertService.GetGiftCertsAsync(ModuleState.ModuleId);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Loading GiftCert {Error}", ex.Message);
+            AddModuleMessage(Localizer["Message.LoadError"], MessageType.Error);
+        }
+    }
+
+    private async Task Delete(GiftCert GiftCert)
+    {
+        try
+        {
+            await GiftCertService.DeleteGiftCertAsync(GiftCert.GiftCertId, ModuleState.ModuleId);
+            await logger.LogInformation("GiftCert Deleted {GiftCert}", GiftCert);
+            _GiftCerts = await GiftCertService.GetGiftCertsAsync(ModuleState.ModuleId);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Deleting GiftCert {GiftCert} {Error}", GiftCert, ex.Message);
+            AddModuleMessage(Localizer["Message.DeleteError"], MessageType.Error);
+        }
+    }
+}

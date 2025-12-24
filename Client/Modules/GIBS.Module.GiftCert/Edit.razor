@@ -1,0 +1,213 @@
+@using Oqtane.Modules.Controls
+@using GIBS.Module.GiftCert.Services
+@using GIBS.Module.GiftCert.Models
+
+@namespace GIBS.Module.GiftCert
+@inherits ModuleBase
+@inject IGiftCertService GiftCertService
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<Edit> Localizer
+
+<form @ref="form" class="@(validated ? " was-validated" : "needs-validation")" novalidate>
+    <div class="container">
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="amount" HelpText="Enter the certificate amount" ResourceKey="CertAmount">Amount: </Label>
+            <div class="col-sm-9">
+                <input id="amount" type="number" class="form-control" @bind="@_giftCert.CertAmount" required />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="toName" HelpText="Enter the recipient's name" ResourceKey="ToName">To Name: </Label>
+            <div class="col-sm-9">
+                <input id="toName" class="form-control" @bind="@_giftCert.ToName" required />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="fromName" HelpText="Enter the sender's name" ResourceKey="FromName">From Name: </Label>
+            <div class="col-sm-9">
+                <input id="fromName" class="form-control" @bind="@_giftCert.FromName" required />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="fromEmail" HelpText="Enter the sender's email" ResourceKey="FromEmail">From Email: </Label>
+            <div class="col-sm-9">
+                <input id="fromEmail" type="email" class="form-control" @bind="@_giftCert.FromEmail" required />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="fromPhone" HelpText="Enter the sender's phone" ResourceKey="FromPhone">From Phone: </Label>
+            <div class="col-sm-9">
+                <input id="fromPhone" type="tel" class="form-control" @bind="@_giftCert.FromPhone" />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="notes" HelpText="Enter any notes" ResourceKey="Notes">Notes: </Label>
+            <div class="col-sm-9">
+                <textarea id="notes" class="form-control" @bind="@_giftCert.Notes" rows="3"></textarea>
+            </div>
+        </div>
+
+        <hr class="my-3" />
+        <h5>Mailing Information</h5>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailTo" HelpText="Enter the name for mailing" ResourceKey="MailTo">Mail To Name: </Label>
+            <div class="col-sm-9">
+                <input id="mailTo" class="form-control" @bind="@_giftCert.MailTo" />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToAddress" HelpText="Enter the mailing address" ResourceKey="MailToAddress">Address: </Label>
+            <div class="col-sm-9">
+                <input id="mailToAddress" class="form-control" @bind="@_giftCert.MailToAddress" />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToAddress1" HelpText="Enter additional address info" ResourceKey="MailToAddress1">Address Line 2: </Label>
+            <div class="col-sm-9">
+                <input id="mailToAddress1" class="form-control" @bind="@_giftCert.MailToAddress1" />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToCity" HelpText="Enter the city" ResourceKey="MailToCity">City: </Label>
+            <div class="col-sm-9">
+                <input id="mailToCity" class="form-control" @bind="@_giftCert.MailToCity" />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToState" HelpText="Enter the state" ResourceKey="MailToState">State: </Label>
+            <div class="col-sm-9">
+                <input id="mailToState" class="form-control" @bind="@_giftCert.MailToState" />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="mailToZip" HelpText="Enter the ZIP code" ResourceKey="MailToZip">ZIP Code: </Label>
+            <div class="col-sm-9">
+                <input id="mailToZip" class="form-control" @bind="@_giftCert.MailToZip" />
+            </div>
+        </div>
+
+        <hr class="my-3" />
+        <h5>Details & Payment</h5>
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="isProcessed" HelpText="Has this been processed?" ResourceKey="IsProcessed">Processed: </Label>
+            <div class="col-sm-9">
+                <select id="isProcessed" class="form-select" value="@_giftCert.isProcessed.ToString()" @onchange="(e) => _giftCert.isProcessed = bool.Parse(e.Value.ToString())">
+                    <option value="True">Yes</option>
+                    <option value="False">No</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="paymentState" HelpText="PayPal Payment State" ResourceKey="PaypalPaymentState">Payment State: </Label>
+            <div class="col-sm-9">
+                <input id="paymentState" class="form-control" @bind="@_giftCert.PaypalPaymentState" />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="paymentId" HelpText="PayPal Payment ID" ResourceKey="PP_PaymentId">Payment ID: </Label>
+            <div class="col-sm-9">
+                <input id="paymentId" class="form-control" @bind="@_giftCert.PP_PaymentId" />
+            </div>
+        </div>
+
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="response" HelpText="PayPal Response Data" ResourceKey="PP_Response">PayPal Response: </Label>
+            <div class="col-sm-9">
+                <textarea id="response" class="form-control" @bind="@_giftCert.PP_Response" rows="4"></textarea>
+            </div>
+        </div>
+
+    </div>
+    <br />
+    <button type="button" class="btn btn-success" @onclick="Save">@Localizer["Save"]</button>
+    <NavLink class="btn btn-secondary" href="@NavigateUrl()">@Localizer["Cancel"]</NavLink>
+    <br /><br />
+    @if (PageState.Action == "Edit")
+    {
+        <AuditInfo CreatedBy="@_giftCert.CreatedBy" CreatedOn="@_giftCert.CreatedOn" ModifiedBy="@_giftCert.ModifiedBy" ModifiedOn="@_giftCert.ModifiedOn"></AuditInfo>
+    }
+</form>
+
+@code {
+    public override SecurityAccessLevel SecurityAccessLevel => SecurityAccessLevel.Edit;
+    public override bool UseAdminContainer => false;
+
+    public override string Actions => "Add,Edit";
+
+    public override string Title => "Manage GiftCert";
+
+    public override List<Resource> Resources => new List<Resource>()
+    {
+        new Stylesheet("_content/GIBS.Module.GiftCert/Module.css")
+    };
+
+    private ElementReference form;
+    private bool validated = false;
+
+    private int _id;
+    private GiftCert _giftCert = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (PageState.Action == "Edit")
+            {
+                _id = Int32.Parse(PageState.QueryString["id"]);
+                _giftCert = await GiftCertService.GetGiftCertAsync(_id, ModuleState.ModuleId);
+            }
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Loading GiftCert {GiftCertId} {Error}", _id, ex.Message);
+            AddModuleMessage(Localizer["Message.LoadError"], MessageType.Error);
+        }
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            validated = true;
+            var interop = new Oqtane.UI.Interop(JSRuntime);
+            if (await interop.FormValid(form))
+            {
+                if (PageState.Action == "Add")
+                {
+                    _giftCert.ModuleId = ModuleState.ModuleId;
+                    _giftCert = await GiftCertService.AddGiftCertAsync(_giftCert);
+                    await logger.LogInformation("GiftCert Added {GiftCert}", _giftCert);
+                }
+                else
+                {
+                    await GiftCertService.UpdateGiftCertAsync(_giftCert);
+                    await logger.LogInformation("GiftCert Updated {GiftCert}", _giftCert);
+                }
+                NavigationManager.NavigateTo(NavigateUrl());
+            }
+            else
+            {
+                AddModuleMessage(Localizer["Message.SaveValidation"], MessageType.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Saving GiftCert {Error}", ex.Message);
+            AddModuleMessage(Localizer["Message.SaveError"], MessageType.Error);
+        }
+    }
+}

@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <Version>1.0.0</Version>
+    <Product>GIBS.Module.GiftCert</Product>
+    <Authors>GIBS</Authors>
+    <Company>GIBS</Company>
+    <Description>Gift Certificate</Description>
+    <Copyright>GIBS</Copyright>
+    <AssemblyName>GIBS.Module.GiftCert.Server.Oqtane</AssemblyName>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <StaticWebAssetsFingerprintContent>false</StaticWebAssetsFingerprintContent>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\_content\**\*.*" />
+    <None Include="wwwroot\_content\**\*.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.9" />
+    <PackageReference Include="PayPalServerSDK" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Client\GIBS.Module.GiftCert.Client.csproj" />
+    <ProjectReference Include="..\Shared\GIBS.Module.GiftCert.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Oqtane.Server"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Server.dll</HintPath></Reference>
+    <Reference Include="Oqtane.Shared"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Shared.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>
