@@ -19,6 +19,13 @@ using System.Threading.Tasks;
 using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.Rendering;
+using MigraDoc.RtfRendering;
+using PdfSharp;
+using PdfSharp.Pdf;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf.IO;
 
 namespace GIBS.Module.GiftCert.Services
 {
@@ -264,11 +271,13 @@ namespace GIBS.Module.GiftCert.Services
             int smtpPort = int.Parse(GetSetting("SMTPPort", "587"));
             string smtpUserName = GetSetting("SMTPUsername", "");
             string smtpPassword = GetSetting("SMTPPassword", "");
+            string smtpSender = GetSetting("SMTPSender", smtpUserName);
             string smtpSSL = GetSetting("SMTPSSL", "false"); // Oqtane often has this setting
 
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Webmaster", smtpUserName));
+            message.From.Add(new MailboxAddress("Webmaster", smtpSender));
             message.To.Add(new MailboxAddress(recipientName, recipientEmail));
+            message.ReplyTo.Add(new MailboxAddress(bccName, bccEmail));
 
             if (!string.IsNullOrEmpty(bccEmail))
             {

@@ -28,6 +28,7 @@ namespace GIBS.Module.GiftCert.Models
         public string PP_PaymentId { get; set; }
         public string PP_Response { get; set; }
         public string PaypalPaymentState { get; set; }
+        public string IP_Address { get; set; }
 
         public string CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }

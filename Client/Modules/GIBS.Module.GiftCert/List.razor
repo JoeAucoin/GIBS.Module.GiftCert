@@ -33,9 +33,27 @@ else
                 <td>@context.FromName</td>
                 <td>@context.FromEmail</td>
                 <td>@context.ToName</td>
-                <td>@context.CertAmount</td>
-                <td>@context.PaypalPaymentState</td>
-                <td>@(context.isProcessed? Localizer["Yes"] : Localizer["No"])</td>
+                <td>$@context.CertAmount.ToString("N2")</td>
+                <td class="text-center">
+                    @if (context.PaypalPaymentState == "PAID")
+                    {
+                        <span class="oi oi-circle-check text-success fs-4" title="@context.PaypalPaymentState" aria-hidden="true"></span>
+                    }
+                    else
+                    {
+                        <span class="oi oi-circle-x text-danger fs-4" title="@context.PaypalPaymentState" aria-hidden="true"></span>
+                    }
+                </td>
+                <td class="text-center">
+                    @if (context.isProcessed)
+                    {
+                        <span class="oi oi-circle-check text-success fs-4" title="@Localizer["Yes"]" aria-hidden="true"></span>
+                    }
+                    else
+                    {
+                        <span class="oi oi-circle-x text-danger fs-4" title="@Localizer["No"]" aria-hidden="true"></span>
+                    }
+                </td>
                 <td>@context.CreatedOn.ToLocalTime().ToShortDateString() @context.CreatedOn.ToLocalTime().ToShortTimeString()</td>
             </Row>
         </Pager>
@@ -53,7 +71,7 @@ else
 
     public override List<Resource> Resources => new List<Resource>()
     {
-        new Stylesheet("_content/GIBS.Module.GiftCert/Module.css"),
+        new Stylesheet("_content/GIBS.Module.GiftCert/Module.css?v=1.0.0"),
         new Script("_content/GIBS.Module.GiftCert/Module.js")
     };
 

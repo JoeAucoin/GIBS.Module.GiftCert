@@ -23,6 +23,7 @@ namespace GIBS.Module.GiftCert.Startup
         {
             services.AddTransient<IGiftCertService, ServerGiftCertService>();
             services.AddDbContextFactory<GiftCertContext>(opt => { }, ServiceLifetime.Transient);
+            
         }
     }
 }

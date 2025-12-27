@@ -1,5 +1,6 @@
 @using GIBS.Module.GiftCert.Services
 @using GIBS.Module.GiftCert.Models
+@using Microsoft.AspNetCore.Components.Routing
 @using System.ComponentModel.DataAnnotations
 @using Oqtane.Modules.Controls
 @using Oqtane.Shared
@@ -14,6 +15,7 @@
 @using Microsoft.JSInterop
 @using System.Threading.Tasks
 @using System.Text.Json
+@using System.Text
 
 @namespace GIBS.Module.GiftCert
 @inherits ModuleBase
@@ -27,11 +29,13 @@
 @inject Oqtane.Services.IPageService PageService
 
 
-<div><ActionLink Action="List" Security="SecurityAccessLevel.Edit" Text="List GiftCert" ResourceKey="List" /></div>
+
+
 <form @ref="form" class="@(validated ? " was-validated" : "needs-validation")" novalidate>
     <div class="container">
         @if(_ShowFormFields)
         {
+        <div class="moduleInstructions fs-3">@_ModuleInstructions</div>
         <div class="row mb-1 align-items-center">
             <Label Class="col-sm-3" For="certAmount" HelpText="Enter the certificate amount" ResourceKey="CertAmount">Amount: </Label>
             <div class="col-sm-9">
@@ -59,10 +63,11 @@
         <div class="row mb-1 align-items-center">
             <Label Class="col-sm-3" For="fromPhone" HelpText="Enter the sender's phone" ResourceKey="FromPhone">From Phone: </Label>
             <div class="col-sm-9">
-                <input id="fromPhone" type="tel" class="form-control form-control-lg" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" @bind="_giftCert.FromPhone" />
+                <input id="fromPhone" type="tel" class="form-control form-control-lg" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"  placeholder="xxx-xxx-xxxx" @bind="_giftCert.FromPhone" required />
             </div>
         </div>
         }
+
         @if(!_ShowFormFields)
         {
         <div class="row mb-1 align-items-center">
@@ -89,7 +94,23 @@
                     @_giftCert.FromEmail
                 </div>
             </div>
+            <div class="row mb-1 align-items-center">
+                <Label Class="col-sm-3" HelpText="Sender's phone" ResourceKey="FromPhone">From Phone: </Label>
+                <div class="col-sm-9 fs-3">
+                    @_giftCert.FromPhone
+                </div>
+            </div>
         }
+        @if (_ShowFormFields || _ShowShippingAddress)
+        {
+            <div class="row mb-1 align-items-center">
+                <Label Class="col-sm-3" For="notes" HelpText="Enter any notes" ResourceKey="Notes">Note for Recipient: </Label>
+                <div class="col-sm-9">
+                    <textarea id="notes" class="form-control form-control-lg" @bind="_giftCert.Notes"></textarea>
+                </div>
+            </div>
+        }
+
         @if(_ShowShippingAddress)
         {
         <div class="row mb-1 align-items-center">
@@ -129,24 +150,25 @@
             </div>
         </div>
         }
-        <div class="row mb-1 align-items-center">
-            <Label Class="col-sm-3" For="notes" HelpText="Enter any notes" ResourceKey="Notes">Notes: </Label>
-            <div class="col-sm-9">
-                <textarea id="notes" class="form-control form-control-lg" @bind="_giftCert.Notes"></textarea>
-            </div>
-        </div>
+       
 
-        <div class="row mt-4">
-            <div class="col-sm-9 offset-sm-3">
+        @if (_ShowButtons)
+        {
+            <div class="row mt-4">
+                <div class="col-sm-9 offset-sm-3">
 
-                <button type="button" class="btn btn-success" @onclick="Save">@Localizer["Save"]</button>
-                <NavLink class="btn btn-secondary" href="@NavigateUrl()">@Localizer["Cancel"]</NavLink>
+                    <button id="saveButton" type="button" class="btn btn-lg btn-success" @onclick="Save">@_ButtonText</button>
+                    <NavLink class="btn btn-lg btn-secondary" href="@NavigateUrl()">@_CancelButtonText</NavLink>
+                </div>
             </div>
-        </div>
+        }
+
         <div id="paypal-button-container" class="paypal-button-container"></div>
+
+      
     </div>
 </form>
-
+<div class="text-end"><ActionLink Action="List" Security="SecurityAccessLevel.Edit" Text="List GiftCert" ResourceKey="List" /></div>
 @code {
     public override string RenderMode => RenderModes.Interactive;
 
@@ -165,11 +187,14 @@
     private bool _scriptRegistered = false;
     private bool _ShowShippingAddress = false;
     private bool _ShowFormFields = true;
+    private bool _ShowButtons = true;
     private string _RedirectPage;
     private string _EmailFrom;
     private string _EmailNotify;
     private string _EmailSubject;
     private string _ModuleInstructions;
+    private string _ButtonText = "Continue";
+    private string _CancelButtonText = "Cancel";
 
     private string _SpecialInstructions;
 
@@ -184,7 +209,7 @@
 
     public override List<Resource> Resources => new List<Resource>()
     {
-        new Resource { ResourceType = ResourceType.Stylesheet, Url = "_content/GIBS.Module.GiftCert/Module.css" },
+        new Resource { ResourceType = ResourceType.Stylesheet, Url = "_content/GIBS.Module.GiftCert/Module.css?v=1.0.4" },
         new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = "_content/GIBS.Module.GiftCert/Module.js?v=1.7" }
 
     };
@@ -205,7 +230,8 @@
             {
                 _ClientId = SettingService.GetSetting(settings, "OAuthClientId", "");
             }
-
+            _EmailNotify = SettingService.GetSetting(settings, "EmailNotify", "");
+            _ModuleInstructions = SettingService.GetSetting(settings, "ModuleInstructions", "");
 
 
             if (PageState.QueryString?.TryGetValue("id", out var idStr) == true &&
@@ -222,6 +248,7 @@
             {
                 _giftCert = new GiftCert { CertAmount = 25.00M };
                 _giftCert.GiftCertId = 0;
+                _giftCert.IP_Address = PageState.RemoteIPAddress;
                 if (PageState.User != null)
                 {
                     _giftCert.FromName = PageState.User.DisplayName;
@@ -327,6 +354,7 @@
 
     private async Task InitializePayPalButtonsAsync()
     {
+        _ShowButtons = false; // Hide buttons
         _dotNetRef ??= DotNetObjectReference.Create(this);
 
         string url = "https://www.paypal.com/sdk/js?client-id=" + _ClientId + "&currency=USD";
@@ -334,6 +362,7 @@
         await JSRuntime.InvokeVoidAsync(
             "GIBS.GiftCert.loadPayPalSdk", url,
             _dotNetRef);
+        
     }
 
     private async Task Save()
@@ -373,12 +402,58 @@
                 AddModuleMessage(Localizer["Message.UpdateSuccess"], MessageType.Success);
             }
 
+            if (_ButtonText == "Update Shipping Address")
+            {
+                AddModuleMessage(Localizer["Message.ShippingUpdateSuccess"], MessageType.Success);
+
+
+                
+                _ShowButtons = false; // Hide buttons
+                _ShowShippingAddress = false;
+                _ShowFormFields = false;
+
+                var currentUrl = NavigationManager.Uri;
+                var baseUri = NavigationManager.BaseUri;
+                //var site = ModuleState.SiteId; //
+                //var request = _accessor.HttpContext.Request;
+                var mySite = $"{currentUrl.ToString()}";
+
+                var body = new StringBuilder();
+                body.AppendLine($"<p>You have successfully updated the shipping address for this Gift Certificate:</p>");
+                body.AppendLine($"<p><b>From:</b> {_giftCert.FromName}</p>");
+                body.AppendLine($"<p><b>Recipient:</b> {_giftCert.ToName}</p>");
+                body.AppendLine($"<p><b>Amount:</b> ${_giftCert.CertAmount}</p>");
+                body.AppendLine($"<p><b>Your Phone:</b> {_giftCert.FromPhone}</p>");
+                body.AppendLine($"<p><b>Email:</b> {_giftCert.FromEmail}</p>");
+                body.AppendLine($"<p><b>Mail To:</b><br />{_giftCert.MailTo}<br />{_giftCert.MailToAddress}<br />{(!string.IsNullOrEmpty(_giftCert.MailToAddress1) ? _giftCert.MailToAddress1 + "<br />" : "")}{_giftCert.MailToCity}, {_giftCert.MailToState} {_giftCert.MailToZip}</p>");
+
+                body.AppendLine($"<p><b>Notes:</b></p>");
+                body.AppendLine($"<p>{_giftCert.Notes}</p>");
+                body.AppendLine($"<hr />");
+                body.AppendLine($"<p><b>Submitted On:</b> {_giftCert.CreatedOn}</p>");
+                body.AppendLine($"<p><b>IP Address:</b> https://ip-address-lookup-v4.com/ip/{_giftCert.IP_Address}</p>");
+                body.AppendLine($"<p><b>Site:</b> " + mySite.ToString() + "</p>");
+
+
+                await GiftCertService.SendHtmlEmailAsync(
+                  _giftCert.FromName,               // Recipient Name
+                  _giftCert.FromEmail,            // Recipient Email (or wherever you want it to go)
+                  "Webmaster Account",            // BCC Name
+                  "joe@seashoreproperties.com",    // BCC Email
+                  "Gift Certificate Mailing Address Updated for " + _giftCert.ToName,     // Subject
+                 body.ToString());
+
+                 
+
+                return;
+            }
+
             // await SendHtmlEmailAsync(
             //     "joseph.m.aucoin@gmail.com",
             //     "Gift Certificate Created",
             //     $"<h1>Your gift certificate for ${_giftCert.CertAmount:F2} has been created successfully.</h1>");
             // UPDATED CALL
-          
+
 
             _pendingPayPalInit = true;
             await InvokeAsync(StateHasChanged);
@@ -483,13 +558,41 @@
 
                 var updateCert = await GiftCertService.UpdateGiftCertAsync(_giftCert);
 
+                _ShowButtons = true; // Show buttons
+                _ButtonText = "Update Shipping Address";
+                _CancelButtonText = "All Set, Looks Good";
+
+                var currentUrl = NavigationManager.Uri;
+                var baseUri = NavigationManager.BaseUri;
+                //var site = ModuleState.SiteId; //
+                //var request = _accessor.HttpContext.Request;
+                var mySite = $"{currentUrl.ToString()}";
+
+                var body = new StringBuilder();
+                body.AppendLine($"<p>You have successfully ordered a new Gift Certificate:</p>");
+                body.AppendLine($"<p><b>From:</b> {_giftCert.FromName}</p>");
+                body.AppendLine($"<p><b>Recipient:</b> {_giftCert.ToName}</p>");
+                body.AppendLine($"<p><b>Amount:</b> ${_giftCert.CertAmount}</p>");
+                body.AppendLine($"<p><b>Your Phone:</b> {_giftCert.FromPhone}</p>");
+                body.AppendLine($"<p><b>Email:</b> {_giftCert.FromEmail}</p>");
+                body.AppendLine($"<p><b>Mail To:</b><br />{_giftCert.MailTo}<br />{_giftCert.MailToAddress}<br />{(!string.IsNullOrEmpty(_giftCert.MailToAddress1) ? _giftCert.MailToAddress1 + "<br />" : "")}{_giftCert.MailToCity}, {_giftCert.MailToState} {_giftCert.MailToZip}</p>");
+
+                body.AppendLine($"<p><b>Notes:</b></p>");
+                body.AppendLine($"<p>{_giftCert.Notes}</p>");
+                body.AppendLine($"<hr />");
+                body.AppendLine($"<p><b>Submitted On:</b> {_giftCert.CreatedOn}</p>");
+                body.AppendLine($"<p><b>IP Address:</b> https://ip-address-lookup-v4.com/ip/{_giftCert.IP_Address}</p>");
+                body.AppendLine($"<p><b>Site:</b> " + mySite.ToString() + "</p>");
+
+
                 await GiftCertService.SendHtmlEmailAsync(
                   _giftCert.FromName,               // Recipient Name
                   _giftCert.FromEmail,            // Recipient Email (or wherever you want it to go)
                   "Webmaster Account",            // BCC Name
                   "joe@seashoreproperties.com",    // BCC Email
-                  "Gift Certificate Created for " + _giftCert.ToName,     // Subject
-                  $"<h1>Your gift certificate for ${_giftCert.CertAmount:F2} to {_giftCert.ToName} has been created successfully.</h1>"); // Body
+                  "Gift Certificate Ordered for " + _giftCert.ToName,     // Subject
+                 body.ToString());
+                //$"<h1>Your gift certificate for ${_giftCert.CertAmount:F2} to {_giftCert.ToName} has been created successfully.</h1>"); // Body
 
                 // Hide the PayPal buttons and show a success message
                 var interop = new Oqtane.UI.Interop(JSRuntime);

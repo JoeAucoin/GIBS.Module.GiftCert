@@ -118,22 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Message.UpdateSuccess" xml:space="preserve">
-    <value>Payment successful. Please confirm the shipping address for the gift certificate.</value>
-  </data>
-  <data name="Add.Text" xml:space="preserve">
-    <value>Add GiftCert</value>
-  </data>
-  <data name="Edit.Text" xml:space="preserve">
-    <value>Edit</value>
-  </data>
-  <data name="Delete.Text" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="Delete.Header" xml:space="preserve">
-    <value>Delete GiftCert</value>
-  </data>
-  <data name="Delete.Message" xml:space="preserve">
-    <value>Are You Sure You Wish To Delete This GiftCert?</value>
+    <value>&lt;h2 class="text-center"&gt;Payment successful. Please confirm the shipping address for the gift certificate.&lt;/h2&gt;</value>
   </data>
   <data name="Message.DisplayNone" xml:space="preserve">
     <value>No GiftCerts To Display</value>
@@ -145,12 +130,27 @@
     <value>Error Deleting GiftCert</value>
   </data>
   <data name="Message.SaveSuccess" xml:space="preserve">
-    <value>Please complete your payment with PayPal.</value>
+    <value>&lt;h1 class="text-center"&gt;Please complete your payment with PayPal.&lt;/h1&gt;</value>
   </data>
   <data name="Message.PaymentSuccess" xml:space="preserve">
-    <value>&lt;h2&gt;Thank you! Your payment has been processed successfully.&lt;br /&gt;Please confirm the shipping address.&lt;/h2&gt;</value>
+    <value>&lt;h2 class="text-center"&gt;Thank you! Your payment has been processed successfully.&lt;br /&gt;Please confirm the shipping address. You can correct as necessary.&lt;/h2&gt;</value>
   </data>
-  <data name="CertAmount" xml:space="preserve">
+  <data name="CertAmount.Text" xml:space="preserve">
     <value>Certificate Amount:</value>
+  </data>
+  <data name="Message.ShippingUpdateSuccess" xml:space="preserve">
+    <value>&lt;h1 class="text-center"&gt;Shipping Address Updated Successfully&lt;/h1&gt;</value>
+  </data>
+  <data name="List.Text" xml:space="preserve">
+    <value>Manage</value>
+  </data>
+  <data name="Message.SaveValidation" xml:space="preserve">
+    <value>&lt;h1 class="text-center"&gt;Please complete all required fields.&lt;/h1&gt;</value>
+  </data>
+  <data name="Notes.Help" xml:space="preserve">
+    <value>Add any notes you'd like added to the certificate.</value>
+  </data>
+  <data name="ToName" xml:space="preserve">
+    <value>Recipient:</value>
   </data>
 </root>

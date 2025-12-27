@@ -9,9 +9,9 @@ namespace GIBS.Module.GiftCert
         {
             Name = "GiftCert",
             Description = "Gift Certificate",
-            Version = "1.0.0",
+            Version = "1.0.1",
             ServerManagerType = "GIBS.Module.GiftCert.Manager.GiftCertManager, GIBS.Module.GiftCert.Server.Oqtane",
-            ReleaseVersions = "1.0.0",
+            ReleaseVersions = "1.0.0,1.0.1",
             Dependencies = "GIBS.Module.GiftCert.Shared.Oqtane",
             PackageName = "GIBS.Module.GiftCert" 
         };

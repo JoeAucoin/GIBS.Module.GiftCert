@@ -147,4 +147,16 @@
   <data name="PaypalPaymentState" xml:space="preserve">
     <value>isPaid</value>
   </data>
+  <data name="FromName" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="FromEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="ToName" xml:space="preserve">
+    <value>Recipient</value>
+  </data>
+  <data name="isProcessed" xml:space="preserve">
+    <value>Processed</value>
+  </data>
 </root>

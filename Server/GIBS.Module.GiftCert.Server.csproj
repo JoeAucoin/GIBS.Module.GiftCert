@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Product>GIBS.Module.GiftCert</Product>
     <Authors>GIBS</Authors>
     <Company>GIBS</Company>
@@ -25,6 +25,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.9" />
     <PackageReference Include="PayPalServerSDK" Version="2.1.0" />
+    <PackageReference Include="PDFsharp-MigraDoc" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,5 +42,8 @@
     </Reference>
     <Reference Include="Oqtane.Server"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Server.dll</HintPath></Reference>
     <Reference Include="Oqtane.Shared"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Shared.dll</HintPath></Reference>
+    <Reference Include="System.Security.Cryptography.Pkcs">
+      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\System.Security.Cryptography.Pkcs.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
