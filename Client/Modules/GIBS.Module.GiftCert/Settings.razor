@@ -70,6 +70,14 @@
     <hr class="my-4" />
 
     <h5 class="mb-3">General Settings</h5>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="defaultValue" HelpText="Enter Default Value for Certificate" ResourceKey="DefaultValue" ResourceType="@resourceType">Default Value: </Label>
+        <div class="col-sm-9">
+            <input id="defaultValue" type="text" class="form-control" @bind="@_DefaultValue" />
+        </div>
+    </div>
+
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="moduleInstructions" HelpText="Enter module instructions" ResourceKey="ModuleInstructions" ResourceType="@resourceType">Module Instructions: </Label>
         <div class="col-sm-9">
@@ -155,7 +163,7 @@
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="emailBCC" HelpText="Enter BCC Email" ResourceKey="EmailBCC" ResourceType="@resourceType">BCC Email: </Label>
         <div class="col-sm-9">
-            <input id="emailBCC" class="form-control" @bind="@_EmailBCC" required />
+            <input id="emailBCC" class="form-control" @bind="@_EmailBCC" />
         </div>
     </div>
 
@@ -206,7 +214,7 @@
     private string _PayPalPayee;
     private bool _PayPalSandboxMode;
     private string _NumPerPage;
-    private string _RedirectPage;
+    private string _DefaultValue;
     private string _EmailReplyTo;
     private string _EmailNotify;
     private string _EmailBCC;
@@ -256,6 +264,7 @@
             _payPalSandboxClientSecret = SettingService.GetSetting(settings, "PayPalSandboxClientSecret", "");
             _OAuthClientId = SettingService.GetSetting(settings, "OAuthClientId", "");
             _OAuthClientSecret = SettingService.GetSetting(settings, "OAuthClientSecret", "");
+            _DefaultValue = SettingService.GetSetting(settings, "DefaultValue", "25.00");
             _NumPerPage = SettingService.GetSetting(settings, "NumPerPage", "10");
             _EmailReplyTo = SettingService.GetSetting(settings, "EmailReplyTo", "");
             _EmailNotify = SettingService.GetSetting(settings, "EmailNotify", "");
@@ -292,6 +301,7 @@
             SettingService.SetSetting(settings, "PayPalSandboxClientSecret", _payPalSandboxClientSecret);
             SettingService.SetSetting(settings, "OAuthClientId", _OAuthClientId);
             SettingService.SetSetting(settings, "OAuthClientSecret", _OAuthClientSecret);
+            SettingService.SetSetting(settings, "DefaultValue", _DefaultValue);
             SettingService.SetSetting(settings, "NumPerPage", _NumPerPage);
             SettingService.SetSetting(settings, "EmailReplyTo", _EmailReplyTo);
             SettingService.SetSetting(settings, "EmailNotify", _EmailNotify);

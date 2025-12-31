@@ -172,7 +172,7 @@
 @code {
     public override string RenderMode => RenderModes.Interactive;
 
-//    private Oqtane.UI.Interop _interop;
+    //    private Oqtane.UI.Interop _interop;
 
     private ElementReference form;
     private bool validated;
@@ -190,6 +190,7 @@
     private string _ModuleInstructions;
     private string _ButtonText = "Continue";
     private string _CancelButtonText = "Cancel";
+    private decimal _DefaultValue = 25.00M;
     private bool _PayPalSandboxMode;
     private string _ClientId;       
 
@@ -224,6 +225,7 @@
             _EmailBCC = SettingService.GetSetting(settings, "EmailBCC", "");
             _EmailReplyTo = SettingService.GetSetting(settings, "EmailReplyTo", "");
             _ModuleInstructions = SettingService.GetSetting(settings, "ModuleInstructions", "");
+            _DefaultValue = decimal.Parse(SettingService.GetSetting(settings, "DefaultValue", "25"));
 
 
             if (PageState.QueryString?.TryGetValue("id", out var idStr) == true &&
@@ -238,7 +240,8 @@
             }
             else
             {
-                _giftCert = new GiftCert { CertAmount = 25.00M };
+                _DefaultValue = Math.Max(_DefaultValue, 1.00M); // Ensure minimum value of 1.00
+                _giftCert = new GiftCert { CertAmount = _DefaultValue };
                 _giftCert.GiftCertId = 0;
                 _giftCert.IP_Address = PageState.RemoteIPAddress;
                 if (PageState.User != null)
@@ -324,6 +327,7 @@
                 await logger.LogInformation("Gift Certificate Added {GiftCert}", newCert);
                 AddModuleMessage(Localizer["Message.SaveSuccess"], MessageType.Success);
                 _ShowFormFields = false;
+                _ShowButtons = false;
 
             }
             else
@@ -333,7 +337,7 @@
                 AddModuleMessage(Localizer["Message.UpdateSuccess"], MessageType.Success);
             }
 
-            if (_ButtonText == "Update Shipping Address")
+            if (_ButtonText == "Update Mailing Address")
             {
                 AddModuleMessage(Localizer["Message.ShippingUpdateSuccess"], MessageType.Success);
 
@@ -350,7 +354,7 @@
                 var mySite = $"{currentUrl.ToString()}";
 
                 var body = new StringBuilder();
-                body.AppendLine($"<p>You have successfully updated the shipping address for this Gift Certificate:</p>");
+                body.AppendLine($"<p>You have successfully updated the mailing address for this Gift Certificate:</p>");
                 body.AppendLine($"<p><b>From:</b> {_giftCert.FromName}</p>");
                 body.AppendLine($"<p><b>Recipient:</b> {_giftCert.ToName}</p>");
                 body.AppendLine($"<p><b>Amount:</b> ${_giftCert.CertAmount}</p>");

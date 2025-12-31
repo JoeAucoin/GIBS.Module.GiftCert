@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Message.UpdateSuccess" xml:space="preserve">
-    <value>&lt;h2 class="text-center"&gt;Payment successful. Please confirm the shipping address for the gift certificate.&lt;/h2&gt;</value>
+    <value>&lt;h2 class="text-center"&gt;Payment successful. Please confirm the mailing address for the gift certificate.&lt;/h2&gt;</value>
   </data>
   <data name="Message.DisplayNone" xml:space="preserve">
     <value>No GiftCerts To Display</value>
@@ -136,10 +136,10 @@
     <value>&lt;h2 class="text-center"&gt;Thank you! Your payment has been processed successfully.&lt;br /&gt;Please confirm the shipping address. You can correct as necessary.&lt;/h2&gt;</value>
   </data>
   <data name="CertAmount.Text" xml:space="preserve">
-    <value>Certificate Amount:</value>
+    <value>Amount:</value>
   </data>
   <data name="Message.ShippingUpdateSuccess" xml:space="preserve">
-    <value>&lt;h1 class="text-center"&gt;Shipping Address Updated Successfully&lt;/h1&gt;</value>
+    <value>&lt;h1 class="text-center"&gt;Mailing Address Updated Successfully&lt;/h1&gt;</value>
   </data>
   <data name="List.Text" xml:space="preserve">
     <value>Manage</value>
@@ -150,7 +150,7 @@
   <data name="Notes.Help" xml:space="preserve">
     <value>Add any notes you'd like added to the certificate.</value>
   </data>
-  <data name="ToName" xml:space="preserve">
+  <data name="ToName.Text" xml:space="preserve">
     <value>Recipient:</value>
   </data>
 </root>
