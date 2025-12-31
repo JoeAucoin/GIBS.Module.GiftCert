@@ -172,36 +172,25 @@
 @code {
     public override string RenderMode => RenderModes.Interactive;
 
-    private Oqtane.UI.Interop _interop;
+//    private Oqtane.UI.Interop _interop;
 
     private ElementReference form;
     private bool validated;
     private GiftCert _giftCert = new();
     private int _id = -1;
-    private string SmptHost = "";
-    private int SmptPort = 587;
-    private string SmptUserName = "";
-    private string SmptPassword = "";
     private DotNetObjectReference<Index>? _dotNetRef;
     private bool _pendingPayPalInit = true;
-    private bool _scriptRegistered = false;
     private bool _ShowShippingAddress = false;
     private bool _ShowFormFields = true;
     private bool _ShowButtons = true;
-    private string _RedirectPage;
-    private string _EmailFrom;
+    private string _EmailReplyTo;
+    private string _EmailBCC;
     private string _EmailNotify;
     private string _EmailSubject;
     private string _ModuleInstructions;
     private string _ButtonText = "Continue";
     private string _CancelButtonText = "Cancel";
-
-    private string _SpecialInstructions;
-
-    private string _CertReturnAddress;
-
     private bool _PayPalSandboxMode;
-
     private string _ClientId;       
 
 
@@ -231,6 +220,9 @@
                 _ClientId = SettingService.GetSetting(settings, "OAuthClientId", "");
             }
             _EmailNotify = SettingService.GetSetting(settings, "EmailNotify", "");
+            _EmailSubject = SettingService.GetSetting(settings, "EmailSubject", "Gift Certificate Created");
+            _EmailBCC = SettingService.GetSetting(settings, "EmailBCC", "");
+            _EmailReplyTo = SettingService.GetSetting(settings, "EmailReplyTo", "");
             _ModuleInstructions = SettingService.GetSetting(settings, "ModuleInstructions", "");
 
 
@@ -263,68 +255,7 @@
         }
     }
 
-    // private string GetClientId()
-    // {
-    //     if (ModuleState?.Settings != null)
-    //     {
-    //         var sandboxMode = bool.Parse(SettingService.GetSetting(ModuleState.Settings, "PayPalSandboxMode", "true"));
-    //         return sandboxMode
-    //             ? SettingService.GetSetting(ModuleState.Settings, "PayPalSandboxClientId", "")
-    //             : SettingService.GetSetting(ModuleState.Settings, "OAuthClientId", "");
-    //     }
-    //     return "nosettingsgotten";
-    // }
 
-
-    // private async Task OLDSendHtmlEmailAsync(string recipientEmail, string subject, string htmlMessage)
-    // {
-    //     var hostSettings = await SettingService.GetSiteSettingsAsync(PageState.Site.SiteId);
-
-    //     if (hostSettings.TryGetValue("SMTPHost", out var smtpHost))
-    //     {
-    //         SmptHost = smtpHost;
-    //     }
-
-    //     if (hostSettings.TryGetValue("SMTPPort", out var smtpPort) && int.TryParse(smtpPort, out var parsedPort))
-    //     {
-    //         SmptPort = parsedPort;
-    //     }
-
-    //     if (hostSettings.TryGetValue("SMTPUsername", out var smtpUserName))
-    //     {
-    //         SmptUserName = smtpUserName;
-    //     }
-
-    //     if (hostSettings.TryGetValue("SMTPPassword", out var smtpPassword))
-    //     {
-    //         SmptPassword = smtpPassword;
-    //     }
-
-    //     var message = new MimeMessage();
-    //     message.From.Add(new MailboxAddress("Webmaster", SmptUserName));
-    //     message.To.Add(new MailboxAddress("Recipient Name", recipientEmail));
-    //     message.Subject = subject;
-    //     message.ReplyTo.Add(new MailboxAddress(_giftCert.FromName, _giftCert.FromEmail));
-    //     message.Bcc.Add(new MailboxAddress("Webmaster Account", "joseph.m.aucoin@gmail.com"));
-
-    //     var bodyBuilder = new BodyBuilder
-    //     {
-    //         HtmlBody = htmlMessage,
-    //         TextBody = "This is the plain text alternative."
-    //     };
-
-    //     message.Body = bodyBuilder.ToMessageBody();
-
-    //     using var client = new SmtpClient
-    //     {
-    //         CheckCertificateRevocation = false
-    //     };
-
-    //     await client.ConnectAsync(SmptHost, SmptPort, SecureSocketOptions.Auto);
-    //     await client.AuthenticateAsync(SmptUserName, SmptPassword);
-    //     await client.SendAsync(message);
-    //     await client.DisconnectAsync(true);
-    // }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -434,13 +365,26 @@
                 body.AppendLine($"<p><b>IP Address:</b> https://ip-address-lookup-v4.com/ip/{_giftCert.IP_Address}</p>");
                 body.AppendLine($"<p><b>Site:</b> " + mySite.ToString() + "</p>");
 
-
+                //Notify purchaser of address update
                 await GiftCertService.SendHtmlEmailAsync(
-                  _giftCert.FromName,               // Recipient Name
-                  _giftCert.FromEmail,            // Recipient Email (or wherever you want it to go)
-                  "Webmaster Account",            // BCC Name
-                  "joe@seashoreproperties.com",    // BCC Email
-                  "Gift Certificate Mailing Address Updated for " + _giftCert.ToName,     // Subject
+                    _giftCert.FromName,               // Recipient Name
+                    _giftCert.FromEmail,            // Recipient Email (or wherever you want it to go)
+                    _EmailBCC,            // BCC Name
+                    _EmailBCC,               // BCC Email
+                    _EmailReplyTo,
+                    _EmailReplyTo,     // ReplyTo Email
+                  "Mailing Address Updated: " + _EmailSubject + " " + _giftCert.ToName,     // Subject
+                 body.ToString());
+
+                //NOTIFY ADMIN OF ADDRESS UPDATE
+                await GiftCertService.SendHtmlEmailAsync(
+                    "Gift Certificate Admin",               // Recipient Name
+                    _EmailNotify,            // Recipient Email (or wherever you want it to go)
+                    _EmailBCC,            // BCC Name
+                    _EmailBCC,               // BCC Email
+                    _giftCert.FromName,               // Recipient Name
+                    _giftCert.FromEmail,            // Recipient Email (or wherever you want it to go)
+                  "Mailing Address Updated: " + _EmailSubject + " " + _giftCert.ToName,     // Subject
                  body.ToString());
 
                  
@@ -584,14 +528,28 @@
                 body.AppendLine($"<p><b>IP Address:</b> https://ip-address-lookup-v4.com/ip/{_giftCert.IP_Address}</p>");
                 body.AppendLine($"<p><b>Site:</b> " + mySite.ToString() + "</p>");
 
-
+                // notify purchaser
                 await GiftCertService.SendHtmlEmailAsync(
                   _giftCert.FromName,               // Recipient Name
                   _giftCert.FromEmail,            // Recipient Email (or wherever you want it to go)
-                  "Webmaster Account",            // BCC Name
-                  "joe@seashoreproperties.com",    // BCC Email
-                  "Gift Certificate Ordered for " + _giftCert.ToName,     // Subject
+                  _EmailBCC,            // BCC Name
+                  _EmailBCC,               // BCC Email
+                  _EmailReplyTo,  
+                    _EmailReplyTo,     // ReplyTo Email
+                  _EmailSubject + " " + _giftCert.ToName,     // Subject
                  body.ToString());
+
+                 // NOTIFY ADMIN
+                 await GiftCertService.SendHtmlEmailAsync(
+                    "Gift Certificate Admin",               // Recipient Name
+                    _EmailNotify,            // Recipient Email (or wherever you want it to go)
+                    _EmailBCC,            // BCC Name
+                    _EmailBCC,               // BCC Email
+                    _giftCert.FromName,               // Recipient Name
+                    _giftCert.FromEmail,            // Recipient Email (or wherever you want it to go)
+                 _EmailSubject + " " + _giftCert.ToName,     // Subject
+                   body.ToString());
+
                 //$"<h1>Your gift certificate for ${_giftCert.CertAmount:F2} to {_giftCert.ToName} has been created successfully.</h1>"); // Body
 
                 // Hide the PayPal buttons and show a success message

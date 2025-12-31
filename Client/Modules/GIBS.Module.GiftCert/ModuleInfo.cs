@@ -12,7 +12,7 @@ namespace GIBS.Module.GiftCert
             Version = "1.0.1",
             ServerManagerType = "GIBS.Module.GiftCert.Manager.GiftCertManager, GIBS.Module.GiftCert.Server.Oqtane",
             ReleaseVersions = "1.0.0,1.0.1",
-            Dependencies = "GIBS.Module.GiftCert.Shared.Oqtane",
+            Dependencies = "GIBS.Module.GiftCert.Shared.Oqtane,PaypalServerSdk,PdfSharp,MigraDoc",
             PackageName = "GIBS.Module.GiftCert" 
         };
     }

@@ -4,6 +4,15 @@ GIBS.GiftCert = {
     _isLoading: false,
     _isRendering: false,
 
+    downloadFile: function (filename, base64Content, contentType) {
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = "data:" + contentType + ";base64," + base64Content;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },
+
     loadPayPalSdk: function (url, dotNetRef) {
         // 1. If PayPal is already loaded, just render
         if (window.paypal) {

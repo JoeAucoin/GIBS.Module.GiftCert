@@ -13,6 +13,8 @@ namespace GIBS.Module.GiftCert.Models
         public string RecipientEmail { get; set; }
         public string BccName { get; set; }
         public string BccEmail { get; set; }
+        public string ReplyToName { get; set; }
+        public string ReplyToEmail { get; set; }
         public string Subject { get; set; }
         public string HtmlMessage { get; set; }
     }

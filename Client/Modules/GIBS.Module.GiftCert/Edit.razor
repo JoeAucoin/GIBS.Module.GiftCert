@@ -1,12 +1,20 @@
 @using Oqtane.Modules.Controls
+@using Oqtane.Shared
+@using Oqtane.Services
+@using Oqtane.Modules
+@using Oqtane.Models
+@using Oqtane.Interfaces @* Important for IInterop *@
+@using Oqtane.UI
 @using GIBS.Module.GiftCert.Services
 @using GIBS.Module.GiftCert.Models
+@using Microsoft.JSInterop
 
 @namespace GIBS.Module.GiftCert
 @inherits ModuleBase
 @inject IGiftCertService GiftCertService
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<Edit> Localizer
+@inject IJSRuntime JS
 
 <form @ref="form" class="@(validated ? " was-validated" : "needs-validation")" novalidate>
     <div class="container">
@@ -140,7 +148,12 @@
     <br />
     <button type="button" class="btn btn-success" @onclick="Save">@Localizer["Save"]</button>
     <ActionLink Action="List" Class="btn btn-secondary" Security="SecurityAccessLevel.Edit" Text="Return" ResourceKey="Cancel" />
-    
+
+    @if (PageState.Action == "Edit")
+    {
+        <button type="button" class="btn btn-info ms-2" @onclick="GeneratePdf">Generate PDF</button>
+    }
+
     <br /><br />
     @if (PageState.Action == "Edit")
     {
@@ -158,7 +171,8 @@
 
     public override List<Resource> Resources => new List<Resource>()
     {
-        new Stylesheet("_content/GIBS.Module.GiftCert/Module.css")
+        new Stylesheet("_content/GIBS.Module.GiftCert/Module.css"),
+        new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = "_content/GIBS.Module.GiftCert/Module.js?v=1.7" }
     };
 
     private ElementReference form;
@@ -189,7 +203,7 @@
         try
         {
             validated = true;
-            var interop = new Oqtane.UI.Interop(JSRuntime);
+            var interop = new Oqtane.UI.Interop(JS);
             if (await interop.FormValid(form))
             {
                 if (PageState.Action == "Add")
@@ -216,6 +230,34 @@
         {
             await logger.LogError(ex, "Error Saving GiftCert {Error}", ex.Message);
             AddModuleMessage(Localizer["Message.SaveError"], MessageType.Error);
+        }
+    }
+
+    private async Task GeneratePdf()
+    {
+        try
+        {
+            var pdfBytes = await GiftCertService.GenerateCertificatePdfAsync(_giftCert.GiftCertId, ModuleState.ModuleId);
+            if (pdfBytes != null)
+            {
+                // Trigger download in browser using the custom JS function
+                var fileName = $"GiftCertificate-{_giftCert.GiftCertId}.pdf";
+                var base64 = Convert.ToBase64String(pdfBytes);
+
+                
+                await JS.InvokeVoidAsync("GIBS.GiftCert.downloadFile", fileName, base64, "application/pdf");
+
+                AddModuleMessage("PDF Generated Successfully", MessageType.Success);
+            }
+            else
+            {
+                AddModuleMessage("Error Generating PDF", MessageType.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Generating PDF {Error}", ex.Message);
+            AddModuleMessage("Error Generating PDF", MessageType.Error);
         }
     }
 

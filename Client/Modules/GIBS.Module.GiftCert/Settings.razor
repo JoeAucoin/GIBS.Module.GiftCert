@@ -67,7 +67,9 @@
         </div>
     </div>
 
+    <hr class="my-4" />
 
+    <h5 class="mb-3">General Settings</h5>
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="moduleInstructions" HelpText="Enter module instructions" ResourceKey="ModuleInstructions" ResourceType="@resourceType">Module Instructions: </Label>
         <div class="col-sm-9">
@@ -94,8 +96,12 @@
         </div>
     </div>
 
+    <hr class="my-4" />
+
+    <h5 class="mb-3">PDF Settings</h5>
+
     <div class="row mb-1 align-items-center">
-        <Label Class="col-sm-3" For="certBannerText" HelpText="Enter Email From Address" ResourceKey="CertBannerText" ResourceType="@resourceType">Certificate Banner Text: </Label>
+        <Label Class="col-sm-3" For="certBannerText" HelpText="Enter Certificate Banner Text" ResourceKey="CertBannerText" ResourceType="@resourceType">Certificate Banner Text: </Label>
         <div class="col-sm-9">
             <input id="certBannerText" type="text" class="form-control" @bind="@_CertBannerText" />
         </div>
@@ -128,12 +134,14 @@
             <textarea id="certReturnAddress" class="form-control" @bind="@_CertReturnAddress" rows="3"></textarea>
         </div>
     </div>
+    <hr class="my-4" />
 
+    <h5 class="mb-3">Email Settings</h5>
 
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="emailFrom" HelpText="Enter Email From Address" ResourceKey="EmailFrom" ResourceType="@resourceType">Email From Address: </Label>
         <div class="col-sm-9">
-            <input id="emailFrom" type="text" class="form-control" @bind="@_EmailFrom" />
+            <input id="emailFrom" type="text" class="form-control" @bind="@_EmailReplyTo" />
         </div>
     </div>
 
@@ -141,6 +149,13 @@
         <Label Class="col-sm-3" For="emailNotify" HelpText="Enter EmailNotify Address" ResourceKey="EmailNotify" ResourceType="@resourceType">Email Notify Address: </Label>
         <div class="col-sm-9">
             <input id="emailNotify" type="text" class="form-control" @bind="@_EmailNotify" />
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="emailBCC" HelpText="Enter BCC Email" ResourceKey="EmailBCC" ResourceType="@resourceType">BCC Email: </Label>
+        <div class="col-sm-9">
+            <input id="emailBCC" class="form-control" @bind="@_EmailBCC" required />
         </div>
     </div>
 
@@ -192,8 +207,9 @@
     private bool _PayPalSandboxMode;
     private string _NumPerPage;
     private string _RedirectPage;
-    private string _EmailFrom;
+    private string _EmailReplyTo;
     private string _EmailNotify;
+    private string _EmailBCC;
     private string _EmailSubject;
     private string _ModuleInstructions;
     private string _CertBannerText;
@@ -241,8 +257,9 @@
             _OAuthClientId = SettingService.GetSetting(settings, "OAuthClientId", "");
             _OAuthClientSecret = SettingService.GetSetting(settings, "OAuthClientSecret", "");
             _NumPerPage = SettingService.GetSetting(settings, "NumPerPage", "10");
-            _EmailFrom = SettingService.GetSetting(settings, "EmailFrom", "");
+            _EmailReplyTo = SettingService.GetSetting(settings, "EmailReplyTo", "");
             _EmailNotify = SettingService.GetSetting(settings, "EmailNotify", "");
+            _EmailBCC = SettingService.GetSetting(settings, "EmailBCC", "");
             _EmailSubject = SettingService.GetSetting(settings, "EmailSubject", "You have received a Gift Certificate");
             _ModuleInstructions = SettingService.GetSetting(settings, "ModuleInstructions", "");
             _CertBannerText = SettingService.GetSetting(settings, "CertBannerText", "Gift Certificate");
@@ -276,8 +293,9 @@
             SettingService.SetSetting(settings, "OAuthClientId", _OAuthClientId);
             SettingService.SetSetting(settings, "OAuthClientSecret", _OAuthClientSecret);
             SettingService.SetSetting(settings, "NumPerPage", _NumPerPage);
-            SettingService.SetSetting(settings, "EmailFrom", _EmailFrom);
+            SettingService.SetSetting(settings, "EmailReplyTo", _EmailReplyTo);
             SettingService.SetSetting(settings, "EmailNotify", _EmailNotify);
+            SettingService.SetSetting(settings, "EmailBCC", _EmailBCC);
             SettingService.SetSetting(settings, "EmailSubject", _EmailSubject);
             SettingService.SetSetting(settings, "ModuleInstructions", _ModuleInstructions);
             SettingService.SetSetting(settings, "CertBannerText", _CertBannerText);

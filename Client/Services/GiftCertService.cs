@@ -33,7 +33,9 @@ namespace GIBS.Module.GiftCert.Services
         Task<string> CapturePayPalOrderAsync(string orderId, int moduleId);
 
         // NEW METHOD
-        Task SendHtmlEmailAsync(string recipientName, string recipientEmail, string bccName, string bccEmail, string subject, string htmlMessage);
+        Task SendHtmlEmailAsync(string recipientName, string recipientEmail, string bccName, string bccEmail, string replyToName, string replyToEmail, string subject, string htmlMessage);
+
+        Task<byte[]> GenerateCertificatePdfAsync(int giftCertId, int moduleId);
     }
 
     public class GiftCertService : ServiceBase, IGiftCertService
@@ -97,7 +99,7 @@ namespace GIBS.Module.GiftCert.Services
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task SendHtmlEmailAsync(string recipientName, string recipientEmail, string bccName, string bccEmail, string subject, string htmlMessage)
+        public async Task SendHtmlEmailAsync(string recipientName, string recipientEmail, string bccName, string bccEmail, string replyToName, string replyToEmail, string subject, string htmlMessage)
         {
             var request = new EmailRequest
             {
@@ -105,11 +107,19 @@ namespace GIBS.Module.GiftCert.Services
                 RecipientEmail = recipientEmail,
                 BccName = bccName,
                 BccEmail = bccEmail,
+                ReplyToName = replyToName,
+                ReplyToEmail = replyToEmail,
                 Subject = subject,
                 HtmlMessage = htmlMessage
             };
 
             await PostJsonAsync($"{Apiurl}/SendEmail", request);
+        }
+
+        public async Task<byte[]> GenerateCertificatePdfAsync(int giftCertId, int moduleId)
+        {
+            var url = CreateAuthorizationPolicyUrl($"{Apiurl}/pdf/{giftCertId}/{moduleId}", EntityNames.Module, moduleId);
+            return await GetByteArrayAsync(url);
         }
 
     }

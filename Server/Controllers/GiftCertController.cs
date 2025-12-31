@@ -120,9 +120,29 @@ namespace GIBS.Module.GiftCert.Controllers
                 request.RecipientEmail,
                 request.BccName,
                 request.BccEmail,
+                request.ReplyToName,
+                request.ReplyToEmail,
                 request.Subject,
                 request.HtmlMessage
             );
+        }
+
+        [HttpGet("pdf/{id}/{moduleid}")]
+        [Authorize(Policy = PolicyNames.ViewModule)]
+        public async Task<IActionResult> GetPdf(int id, int moduleid)
+        {
+            if (IsAuthorizedEntityId(EntityNames.Module, moduleid))
+            {
+                var pdfBytes = await _GiftCertService.GenerateCertificatePdfAsync(id, moduleid);
+                if (pdfBytes != null)
+                {
+                    return File(pdfBytes, "application/pdf", $"GiftCertificate-{id}.pdf");
+                }
+                return NotFound();
+            }
+
+            _logger.Log(LogLevel.Error, this, LogFunction.Security, "Unauthorized GiftCert PDF Generation Attempt {GiftCertId} {ModuleId}", id, moduleid);
+            return StatusCode((int)HttpStatusCode.Forbidden);
         }
     }
 }
