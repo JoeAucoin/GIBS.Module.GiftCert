@@ -6,6 +6,8 @@
 @inject IGiftCertService GiftCertService
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<List> Localizer
+@inject Oqtane.Services.ISettingService SettingService
+
 
 @if (_GiftCerts == null)
 {
@@ -15,7 +17,7 @@ else
 { 
     @if (@_GiftCerts.Count != 0)
     {
-        <Pager Items="@SortedGiftCerts">
+        <Pager Items="@SortedGiftCerts" PageSize="@_NumberPerPage.ToString()" >
             <Header>
             <th style="width: 1px;">&nbsp;</th>
             <th style="width: 1px;">&nbsp;</th>
@@ -68,6 +70,7 @@ else
     public override string RenderMode => RenderModes.Interactive;
     public override SecurityAccessLevel SecurityAccessLevel => SecurityAccessLevel.Edit;
     public override bool UseAdminContainer => false;
+    public int _NumberPerPage = 10;
 
     public override List<Resource> Resources => new List<Resource>()
     {
@@ -87,6 +90,10 @@ else
     {
         try
         {
+            var settings = await SettingService.GetModuleSettingsAsync(ModuleState.ModuleId);
+            _NumberPerPage = int.Parse(SettingService.GetSetting(settings, "NumPerPage", "10"));
+            
+
             _GiftCerts = await GiftCertService.GetGiftCertsAsync(ModuleState.ModuleId);
         }
         catch (Exception ex)

@@ -60,12 +60,18 @@
                 <input id="fromEmail" type="email" class="form-control form-control-lg" @bind="_giftCert.FromEmail" required />
             </div>
         </div>
-        <div class="row mb-1 align-items-center">
-            <Label Class="col-sm-3" For="fromPhone" HelpText="Enter the sender's phone" ResourceKey="FromPhone">From Phone: </Label>
-            <div class="col-sm-9">
-                <input id="fromPhone" type="tel" class="form-control form-control-lg" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"  placeholder="xxx-xxx-xxxx" @bind="_giftCert.FromPhone" required />
+            <div class="row mb-1 align-items-center">
+                <label class="col-sm-3" for="fromPhone">From Phone: </label>
+                <div class="col-sm-9">
+                    <input id="fromPhone"
+                           type="tel"
+                           class="form-control form-control-lg"
+                           placeholder="xxx-xxx-xxxx"
+                           value="@_giftCert.FromPhone"
+                           @onchange="HandlePhoneChange"
+                           required />
+                </div>
             </div>
-        </div>
         }
 
         @if(!_ShowFormFields)
@@ -258,6 +264,28 @@
         }
     }
 
+
+    private void HandlePhoneChange(ChangeEventArgs e)
+    {
+        string input = e.Value?.ToString() ?? string.Empty;
+        _giftCert.FromPhone = FormatPhoneNumber(input);
+    }
+
+    private string FormatPhoneNumber(string phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone)) return phone;
+
+        // Clean non-numeric characters
+        var digitsOnly = new string(phone.Where(char.IsDigit).ToArray());
+
+        if (digitsOnly.Length == 10)
+        {
+            return string.Format("{0:(###) ###-####}", double.Parse(digitsOnly));
+        }
+
+        // Return original if it doesn't match expected length
+        return phone;
+    }
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
