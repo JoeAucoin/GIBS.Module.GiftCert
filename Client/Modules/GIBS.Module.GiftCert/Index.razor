@@ -35,43 +35,44 @@
     <div class="container">
         @if(_ShowFormFields)
         {
-        <div class="moduleInstructions fs-3">@_ModuleInstructions</div>
-        <div class="row mb-1 align-items-center">
-            <Label Class="col-sm-3" For="certAmount" HelpText="Enter the certificate amount" ResourceKey="CertAmount">Amount: </Label>
-            <div class="col-sm-9">
-                    <input id="certAmount" type="number" step=".01" class="form-control form-control-lg" @bind="_giftCert.CertAmount" required />
+            <div class="moduleInstructions fs-3">@_ModuleInstructions</div>
+            <div class="row mb-1 align-items-center">
+                <Label Class="col-sm-3" For="certAmount" HelpText="Enter the certificate amount" ResourceKey="CertAmount">Amount: </Label>
+                <div class="col-sm-9">
+                        <input id="certAmount" type="number" step=".01" class="form-control form-control-lg" @bind="_giftCert.CertAmount" required />
+                </div>
             </div>
-        </div>
-        <div class="row mb-1 align-items-center">
-            <Label Class="col-sm-3" For="toName" HelpText="Enter the recipient's name" ResourceKey="ToName">To Name: </Label>
-            <div class="col-sm-9">
-                <input id="toName" class="form-control form-control-lg" @bind="_giftCert.ToName" required />
+            <div class="row mb-1 align-items-center">
+                <Label Class="col-sm-3" For="toName" HelpText="Enter the recipient's name" ResourceKey="ToName">To Name: </Label>
+                <div class="col-sm-9">
+                    <input id="toName" class="form-control form-control-lg" @bind="_giftCert.ToName" required />
+                </div>
             </div>
-        </div>
-        <div class="row mb-1 align-items-center">
-            <Label Class="col-sm-3" For="fromName" HelpText="Enter the sender's name" ResourceKey="FromName">From Name: </Label>
-            <div class="col-sm-9">
-                <input id="fromName" class="form-control form-control-lg" @bind="_giftCert.FromName" required />
+            <div class="row mb-1 align-items-center">
+                <Label Class="col-sm-3" For="fromName" HelpText="Enter the sender's name" ResourceKey="FromName">From Name: </Label>
+                <div class="col-sm-9">
+                    <input id="fromName" class="form-control form-control-lg" @bind="_giftCert.FromName" required />
+                </div>
             </div>
-        </div>
-        <div class="row mb-1 align-items-center">
-            <Label Class="col-sm-3" For="fromEmail" HelpText="Enter the sender's email" ResourceKey="FromEmail">From Email: </Label>
-            <div class="col-sm-9">
-                <input id="fromEmail" type="email" class="form-control form-control-lg" @bind="_giftCert.FromEmail" required />
+            <div class="row mb-1 align-items-center">
+                <Label Class="col-sm-3" For="fromEmail" HelpText="Enter the sender's email" ResourceKey="FromEmail">From Email: </Label>
+                <div class="col-sm-9">
+                    <input id="fromEmail" type="email" class="form-control form-control-lg" @bind="_giftCert.FromEmail" required />
+                </div>
             </div>
-        </div>
             <div class="row mb-1 align-items-center">
                 <label class="col-sm-3" for="fromPhone">From Phone: </label>
                 <div class="col-sm-9">
                     <input id="fromPhone"
-                           type="tel"
-                           class="form-control form-control-lg"
-                           placeholder="xxx-xxx-xxxx"
-                           value="@_giftCert.FromPhone"
-                           @onchange="HandlePhoneChange"
-                           required />
+                            type="tel"
+                            class="form-control form-control-lg"
+                            placeholder="(xxx) xxx-xxxx"
+                            value="@_giftCert.FromPhone"
+                            @onchange="HandlePhoneChange"
+                            required />
                 </div>
             </div>
+            
         }
 
         @if(!_ShowFormFields)
@@ -115,6 +116,11 @@
                     <textarea id="notes" class="form-control form-control-lg" @bind="_giftCert.Notes"></textarea>
                 </div>
             </div>
+        }
+
+        @if (_ShowFooterInstructions)
+        {
+            <div class="footerInstructions">@_FooterInstructions</div>
         }
 
         @if(_ShowShippingAddress)
@@ -188,12 +194,14 @@
     private bool _pendingPayPalInit = true;
     private bool _ShowShippingAddress = false;
     private bool _ShowFormFields = true;
+    private bool _ShowFooterInstructions = true;
     private bool _ShowButtons = true;
     private string _EmailReplyTo;
     private string _EmailBCC;
     private string _EmailNotify;
     private string _EmailSubject;
     private string _ModuleInstructions;
+    private string _FooterInstructions;
     private string _ButtonText = "Continue";
     private string _CancelButtonText = "Cancel";
     private decimal _DefaultValue = 25.00M;
@@ -205,7 +213,7 @@
 
     public override List<Resource> Resources => new List<Resource>()
     {
-        new Resource { ResourceType = ResourceType.Stylesheet, Url = "_content/GIBS.Module.GiftCert/Module.css?v=1.0.4" },
+        new Resource { ResourceType = ResourceType.Stylesheet, Url = "_content/GIBS.Module.GiftCert/Module.css?v=1.0.5" },
         new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = "_content/GIBS.Module.GiftCert/Module.js?v=1.7" }
 
     };
@@ -232,6 +240,7 @@
             _EmailReplyTo = SettingService.GetSetting(settings, "EmailReplyTo", "");
             _ModuleInstructions = SettingService.GetSetting(settings, "ModuleInstructions", "");
             _DefaultValue = decimal.Parse(SettingService.GetSetting(settings, "DefaultValue", "25"));
+            _FooterInstructions = SettingService.GetSetting(settings, "FooterInstructions", "");
 
 
             if (PageState.QueryString?.TryGetValue("id", out var idStr) == true &&
@@ -356,6 +365,7 @@
                 AddModuleMessage(Localizer["Message.SaveSuccess"], MessageType.Success);
                 _ShowFormFields = false;
                 _ShowButtons = false;
+                _ShowFooterInstructions = false;
 
             }
             else

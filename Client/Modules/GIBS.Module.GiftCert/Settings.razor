@@ -86,6 +86,13 @@
     </div>
 
     <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="footerInstructions" HelpText="Enter any footer instructions" ResourceKey="FooterInstructions" ResourceType="@resourceType">Module Footer Instructions: </Label>
+        <div class="col-sm-9">
+            <textarea id="footerInstructions" class="form-control" @bind="@_FooterInstructions" rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="folderList" HelpText="Select the file folder" ResourceKey="FileFolder" ResourceType="@resourceType">PDF Folder: </Label>
         <div class="col-sm-9">
             <select id="folderList" class="form-select" @bind="@_FileFolder">
@@ -174,12 +181,7 @@
         </div>
     </div>
 
-    <div class="row mb-1 align-items-center">
-        <Label Class="col-sm-3" For="specialInstructions" HelpText="Enter any special instructions" ResourceKey="SpecialInstructions" ResourceType="@resourceType">Special Instructions: </Label>
-        <div class="col-sm-9">
-            <textarea id="specialInstructions" class="form-control" @bind="@_SpecialInstructions" rows="3"></textarea>
-        </div>
-    </div>
+
 
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="addUserRole" HelpText="Select the add user role" ResourceKey="AddUserRole" ResourceType="@resourceType">Add User Role: </Label>
@@ -224,7 +226,7 @@
     private string _CertFooterText;
     private string _CertWatermark;
     private string _CertLogo;
-    private string _SpecialInstructions;
+    private string _FooterInstructions;
     private string _AddUserRole;
     private string _ManageUserRole;
     private string _CertReturnAddress;
@@ -275,7 +277,7 @@
             _CertFooterText = SettingService.GetSetting(settings, "CertFooterText", "This is a footer text");
             _CertWatermark = SettingService.GetSetting(settings, "CertWatermark", "Gift Certificate");
             _CertLogo = SettingService.GetSetting(settings, "CertLogo", "");
-            _SpecialInstructions = SettingService.GetSetting(settings, "SpecialInstructions", "");
+            _FooterInstructions = SettingService.GetSetting(settings, "FooterInstructions", "");
             _AddUserRole = SettingService.GetSetting(settings, "AddUserRole", "");
             _ManageUserRole = SettingService.GetSetting(settings, "ManageUserRole", "");
             _CertReturnAddress = SettingService.GetSetting(settings, "CertReturnAddress", "");
@@ -312,7 +314,7 @@
             SettingService.SetSetting(settings, "CertFooterText", _CertFooterText);
             SettingService.SetSetting(settings, "CertWatermark", _CertWatermark);
             SettingService.SetSetting(settings, "CertLogo", _CertLogo);
-            SettingService.SetSetting(settings, "SpecialInstructions", _SpecialInstructions);
+            SettingService.SetSetting(settings, "FooterInstructions", _FooterInstructions);
             SettingService.SetSetting(settings, "AddUserRole", _AddUserRole);
             SettingService.SetSetting(settings, "ManageUserRole", _ManageUserRole);
             SettingService.SetSetting(settings, "CertReturnAddress", _CertReturnAddress);
