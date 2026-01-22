@@ -205,7 +205,7 @@ namespace GIBS.Module.GiftCert.Services
                             new PurchaseUnitRequest
                             {
                                 Description = $"Gift certificate for {giftCert.ToName ?? "Gift"}",
-                                InvoiceId = giftCert.GiftCertId.ToString(),
+                                InvoiceId = "MID" + giftCert.ModuleId + "-UID" + giftCert.FromUserID + "-GCID" + giftCert.GiftCertId.ToString(),
                               //  CustomId = giftCert.GiftCertId.ToString(),
                                 Amount = new AmountWithBreakdown
                                 {
