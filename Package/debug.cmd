@@ -8,4 +8,4 @@ XCOPY "..\Server\bin\Debug\%TargetFramework%\%ProjectName%.Server.Oqtane.dll" ".
 XCOPY "..\Server\bin\Debug\%TargetFramework%\%ProjectName%.Server.Oqtane.pdb" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\%TargetFramework%\" /Y
 XCOPY "..\Shared\bin\Debug\%TargetFramework%\%ProjectName%.Shared.Oqtane.dll" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\%TargetFramework%\" /Y
 XCOPY "..\Shared\bin\Debug\%TargetFramework%\%ProjectName%.Shared.Oqtane.pdb" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\%TargetFramework%\" /Y
-XCOPY "..\Server\wwwroot\*" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\wwwroot\_content\%ProjectName%\" /Y /S /I
+XCOPY "..\Server\wwwroot\*" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\wwwroot\Modules\%ProjectName%\" /Y /S /I

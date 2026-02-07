@@ -74,8 +74,8 @@ else
 
     public override List<Resource> Resources => new List<Resource>()
     {
-        new Stylesheet("_content/GIBS.Module.GiftCert/Module.css?v=1.0.0"),
-        new Script("_content/GIBS.Module.GiftCert/Module.js")
+        new Resource { ResourceType = ResourceType.Stylesheet, Url = ModulePath() + "Module.css?v=1.0.5" },
+        new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = ModulePath() + "Module.js?v=1.7" }
     };
 
     List<GiftCert> _GiftCerts;

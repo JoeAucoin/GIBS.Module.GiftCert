@@ -213,9 +213,8 @@
 
     public override List<Resource> Resources => new List<Resource>()
     {
-        new Resource { ResourceType = ResourceType.Stylesheet, Url = "_content/GIBS.Module.GiftCert/Module.css?v=1.0.5" },
-        new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = "_content/GIBS.Module.GiftCert/Module.js?v=1.7" }
-
+        new Resource { ResourceType = ResourceType.Stylesheet, Url = ModulePath() + "Module.css?v=1.0.5" },
+        new Resource { ResourceType = ResourceType.Script, Level = ResourceLevel.Site, Url = ModulePath() + "Module.js?v=1.7" }
     };
 
 
