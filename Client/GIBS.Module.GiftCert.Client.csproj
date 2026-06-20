@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Version>1.0.1</Version>
+    <TargetFramework>net10.0</TargetFramework>
+    <Version>1.0.2</Version>
     <Authors>GIBS</Authors>
     <Company>GIBS</Company>
     <Description>Gift Certificate</Description>
@@ -13,26 +13,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.9" />
-    <PackageReference Include="System.Net.Http.Json" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.9" />
+    <PackageReference Include="System.Net.Http.Json" Version="10.0.5" />
+    <PackageReference Include="Oqtane.Client" Version="10.2.1" />
+    <PackageReference Include="Oqtane.Shared" Version="10.2.1" />
+    <PackageReference Include="MailKit" Version="4.17.0" />
+    <PackageReference Include="MimeKit" Version="4.17.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\GIBS.Module.GiftCert.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="MailKit">
-      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\MailKit.dll</HintPath>
-    </Reference>
-    <Reference Include="MimeKit">
-      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\MimeKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Oqtane.Client"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Client.dll</HintPath></Reference>
-    <Reference Include="Oqtane.Shared"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Shared.dll</HintPath></Reference>
   </ItemGroup>
 
   <PropertyGroup>

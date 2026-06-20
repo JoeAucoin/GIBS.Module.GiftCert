@@ -2,8 +2,8 @@
 
 An [Oqtane](https://www.oqtane.org/) module for selling and managing gift certificates. Customers enter gift certificate details, pay via PayPal, and the module can generate a PDF certificate and send email notifications.
 
-- **Oqtane Framework:** 6.2.1
-- **Target Framework:** .NET 9 (`net9.0`)
+-	 **Oqtane Framework:** 10.2.1
+-	 **Target Framework:** .NET 10 (`net10.0`)
 - **Module Name:** `GiftCert`
 - **Package Id:** `GIBS.Module.GiftCert`
 
@@ -43,7 +43,40 @@ An [Oqtane](https://www.oqtane.org/) module for selling and managing gift certif
 Settings UI: `Client/Modules/GIBS.Module.GiftCert/Settings.razor`
 
 ### PayPal
-- `PayPalSandboxMode` (true/false)
+
+#### 📋 Step-by-Step Owner Instructions
+
+Site owners should follow these steps to generate and input their credentials:
+
+1. **Access Portal:** Open the [PayPal Developer Dashboard](https://developer.paypal.com/) and sign in with a PayPal Business account.
+2. **Open Credentials:** Click on **My Apps & Credentials** from the left-hand navigation menu.
+3. **Select Environment:** Click the **Sandbox** tab first to set up a testing environment.
+4. **Create App:** Click the **Create App** button under the REST API apps section.
+5. **Name App:** Name the application (e.g., "Oqtane Gift Certificates") and save.
+6. **Copy Keys:** Copy the **Client ID**, click **Show** under Secret, and copy the **Secret Key**.
+7. **Repeat for Live:** Toggle the dashboard switch to **Live** and repeat the steps for real transactions.
+8. **Update Oqtane:** Paste both sets of keys into your Oqtane module settings panel.
+
+#### ⚙️ Recommended Module Settings UI
+
+To ensure a smooth user experience, your Oqtane module settings component should include these specific fields:
+
+- **Mode Switch:** A dropdown or toggle to switch the module between **Sandbox** and **Live** modes.
+- **Sandbox Pair:** Two distinct text inputs labeled:
+  - `PayPalSandboxClientId`
+  - `PayPalSandboxClientSecret`
+- **Live Pair:** Two distinct text inputs labeled:
+  - `OAuthClientId` (Live Client ID)
+  - `OAuthClientSecret` (Live Secret Key)
+- **Payee Pair:** Two text inputs for:
+  - `PayPalSandboxPayee` (Sandbox)
+  - `PayPalPayee` (Live)
+- **Secure Storage:** Ensure your module saves these keys securely using Oqtane's encrypted site settings API.
+
+#### PayPal Configuration Settings
+
+Settings are stored with the following keys:
+- `PayPalSandboxMode` (true/false) - Toggle between Sandbox and Production
 - Sandbox credentials:
   - `PayPalSandboxPayee`
   - `PayPalSandboxClientId`

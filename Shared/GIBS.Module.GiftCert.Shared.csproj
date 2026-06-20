@@ -1,22 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>    
-    <Version>1.0.1</Version>
+    <TargetFramework>net10.0</TargetFramework>    
+    <Version>1.0.2</Version>
     <Product>GIBS.Module.GiftCert</Product>
     <Authors>GIBS</Authors>
     <Company>GIBS</Company>
     <Description>Gift Certificate</Description>
     <Copyright>GIBS</Copyright>
     <AssemblyName>GIBS.Module.GiftCert.Shared.Oqtane</AssemblyName>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Oqtane.Shared"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Shared.dll</HintPath></Reference>
+    <PackageReference Include="Oqtane.Shared" Version="10.2.1" />
   </ItemGroup>
 
 </Project>

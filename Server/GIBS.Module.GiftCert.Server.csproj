@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Product>GIBS.Module.GiftCert</Product>
     <Authors>GIBS</Authors>
     <Company>GIBS</Company>
@@ -12,6 +12,7 @@
     <AssemblyName>GIBS.Module.GiftCert.Server.Oqtane</AssemblyName>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <StaticWebAssetsFingerprintContent>false</StaticWebAssetsFingerprintContent>
+    <RequireAspNetWebAssets>true</RequireAspNetWebAssets>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,12 +21,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.9" />
-    <PackageReference Include="PayPalServerSDK" Version="2.1.0" />
-    <PackageReference Include="PDFsharp-MigraDoc" Version="6.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.9" />
+    <PackageReference Include="PayPalServerSDK" Version="2.1.0">
+      <PrivateAssets>none</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="PDFsharp-MigraDoc" Version="6.2.3">
+      <PrivateAssets>none</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Oqtane.Server" Version="10.2.1" />
+    <PackageReference Include="Oqtane.Shared" Version="10.2.1" />
+    <PackageReference Include="MailKit" Version="4.17.0" />
+    <PackageReference Include="MimeKit" Version="4.17.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,17 +42,4 @@
     <ProjectReference Include="..\Shared\GIBS.Module.GiftCert.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="MailKit">
-      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\MailKit.dll</HintPath>
-    </Reference>
-    <Reference Include="MimeKit">
-      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\MimeKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Oqtane.Server"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Server.dll</HintPath></Reference>
-    <Reference Include="Oqtane.Shared"><HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\net9.0\Oqtane.Shared.dll</HintPath></Reference>
-    <Reference Include="System.Security.Cryptography.Pkcs">
-      <HintPath>..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Release\net9.0\System.Security.Cryptography.Pkcs.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 </Project>
