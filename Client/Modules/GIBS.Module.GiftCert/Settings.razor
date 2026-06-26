@@ -82,14 +82,14 @@
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="moduleInstructions" HelpText="Enter module instructions" ResourceKey="ModuleInstructions" ResourceType="@resourceType">Module Instructions: </Label>
         <div class="col-sm-9">
-            <textarea id="moduleInstructions" class="form-control" @bind="@_ModuleInstructions" rows="3"></textarea>
+            <textarea id="moduleInstructions" placeholder="Enter your instructions" class="form-control" @bind="@_ModuleInstructions" rows="3"></textarea>
         </div>
     </div>
 
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="footerInstructions" HelpText="Enter any footer instructions" ResourceKey="FooterInstructions" ResourceType="@resourceType">Module Footer Instructions: </Label>
         <div class="col-sm-9">
-            <textarea id="footerInstructions" class="form-control" @bind="@_FooterInstructions" rows="3"></textarea>
+            <textarea id="footerInstructions" placeholder="Gift certificates are valid for 7 years from date of purchase. No cash value. Non-refundable." class="form-control" @bind="@_FooterInstructions" rows="3"></textarea>
         </div>
     </div>
 
@@ -119,14 +119,14 @@
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="certBannerText" HelpText="Enter Certificate Banner Text" ResourceKey="CertBannerText" ResourceType="@resourceType">Certificate Banner Text: </Label>
         <div class="col-sm-9">
-            <input id="certBannerText" type="text" class="form-control" @bind="@_CertBannerText" />
+            <input id="certBannerText" placeholder="Enter Certificate Banner Text" type="text" class="form-control" @bind="@_CertBannerText" />
         </div>
     </div>
 
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="certFooterText" HelpText="Enter certificate footer text" ResourceKey="CertFooterText" ResourceType="@resourceType">Certificate Footer Text: </Label>
         <div class="col-sm-9">
-            <textarea id="certFooterText" class="form-control" @bind="@_CertFooterText" rows="3"></textarea>
+            <textarea id="certFooterText" placeholder="Enter Certificate Footer Text" class="form-control" @bind="@_CertFooterText" rows="3"></textarea>
         </div>
     </div>
 
@@ -145,7 +145,7 @@
     </div>
 
     <div class="row mb-1 align-items-center">
-        <Label Class="col-sm-3" For="certReturnAddress" HelpText="Enter Certificate Return Address" ResourceKey="CertReturnAddress" ResourceType="@resourceType">Company Return Address: </Label>
+        <Label Class="col-sm-3" For="certReturnAddress" HelpText="Enter Certificate Return Address using 3 lines. Line 1: Business Name, Line 2: Street Address, Line 3: City, State, ZIP" ResourceKey="CertReturnAddress" ResourceType="@resourceType">Company Return Address: </Label>
         <div class="col-sm-9">
             <textarea id="certReturnAddress" class="form-control" @bind="@_CertReturnAddress" rows="3"></textarea>
         </div>
@@ -182,7 +182,9 @@
         </div>
     </div>
 
+    <hr class="my-4" />
 
+    <h5 class="mb-3">Role Settings</h5>
 
     <div class="row mb-1 align-items-center">
         <Label Class="col-sm-3" For="addUserRole" HelpText="Select the add user role" ResourceKey="AddUserRole" ResourceType="@resourceType">Add User Role: </Label>

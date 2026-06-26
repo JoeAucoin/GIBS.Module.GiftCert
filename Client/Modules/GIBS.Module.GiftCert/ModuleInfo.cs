@@ -9,10 +9,10 @@ namespace GIBS.Module.GiftCert
         {
             Name = "GiftCert",
             Description = "Gift Certificate",
-            Version = "1.0.2",
+            Version = "10.1.0",
             ServerManagerType = "GIBS.Module.GiftCert.Manager.GiftCertManager, GIBS.Module.GiftCert.Server.Oqtane",
-            ReleaseVersions = "1.0.0,1.0.1,1.0.2",
-            Dependencies = "GIBS.Module.GiftCert.Shared.Oqtane,PayPalServerSDK,PdfSharp,MimeKit,MailKit",
+            ReleaseVersions = "1.0.0,1.0.1,1.0.2,10.1.0",
+            Dependencies = "GIBS.Module.GiftCert.Shared.Oqtane,PayPalServerSDK,PdfSharp,MimeKit,MailKit,Oqtane.Licensing.Client.Oqtane,Oqtane.Licensing.Shared.Oqtane",
             PackageName = "GIBS.Module.GiftCert"
         };
     }

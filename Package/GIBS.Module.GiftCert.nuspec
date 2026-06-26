@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>$projectname$</id>
-    <version>1.0.2</version>
+    <version>10.1.0</version>
     <authors>GIBS</authors>
     <owners>GIBS</owners>
     <title>GiftCert</title>
@@ -33,6 +33,10 @@
     <file src="..\Shared\bin\Release\$targetframework$\$ProjectName$.Shared.Oqtane.dll" target="lib\$targetframework$" />
     <file src="..\Shared\bin\Release\$targetframework$\$ProjectName$.Shared.Oqtane.pdb" target="lib\$targetframework$" />
 
+    <file src="..\Client\bin\Release\$targetframework$\Oqtane.Licensing.Client.Oqtane.dll" target="lib\$targetframework$" />
+    <file src="..\Client\bin\Release\$targetframework$\Oqtane.Licensing.Shared.Oqtane.dll" target="lib\$targetframework$" />
+    <file src="..\Client\bin\Release\$targetframework$\Oqtane.Licensing.Server.Oqtane.dll" target="lib\$targetframework$" />
+
     <!-- MigraDoc Dependencies -->
     <file src="..\Server\bin\Release\$targetframework$\MigraDoc.Rendering.dll" target="lib\$targetframework$" />
     <file src="..\Server\bin\Release\$targetframework$\MigraDoc.DocumentObjectModel.dll" target="lib\$targetframework$" />
@@ -54,7 +58,6 @@
     <file src="..\Server\bin\Release\$targetframework$\APIMatic.Core.dll" target="lib\$targetframework$" />
     <file src="..\Server\bin\Release\$targetframework$\Newtonsoft.Json.dll" target="lib\$targetframework$" />
     <file src="..\Server\bin\Release\$targetframework$\Polly.dll" target="lib\$targetframework$" />
-    <file src="..\Server\bin\Release\$targetframework$\Microsoft.Extensions.Configuration.Binder.dll" target="lib\$targetframework$" />
 
     <!-- Static Assets -->
     <file src="..\Server\wwwroot\**\*.*" target="wwwroot\Modules\$ProjectName$" />

@@ -16,6 +16,7 @@
 @using System.Threading.Tasks
 @using System.Text.Json
 @using System.Text
+@using Oqtane.Licensing
 
 @namespace GIBS.Module.GiftCert
 @inherits ModuleBase
@@ -28,7 +29,14 @@
 @inject IJSRuntime JS
 @inject Oqtane.Services.IPageService PageService
 
+<LicenseView PackageName="@ModuleState.ModuleDefinition.PackageName">
+    <Licensed>
 
+    </Licensed>
+    <NotLicensed>
+
+    </NotLicensed>
+</LicenseView>
 
 
 <form @ref="form" class="@(validated ? " was-validated" : "needs-validation")" novalidate>

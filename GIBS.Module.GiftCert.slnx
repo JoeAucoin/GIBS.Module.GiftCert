@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="../oqtane.framework-6.2.1-Source/Oqtane.Server/Oqtane.Server.csproj">
+    <Build Project="false" />
+  </Project>
+  <Project Path="Client/GIBS.Module.GiftCert.Client.csproj" />
+  <Project Path="Package/GIBS.Module.GiftCert.Package.csproj" />
+  <Project Path="Server/GIBS.Module.GiftCert.Server.csproj" />
+  <Project Path="Shared/GIBS.Module.GiftCert.Shared.csproj" />
+</Solution>

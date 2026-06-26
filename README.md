@@ -127,14 +127,14 @@ If you see errors like:
 - `ReflectionTypeLoadException`
 - `Could not load file or assembly 'APIMatic.Core'`
 
-then your package is missing transitive dependencies. Ensure that required third-party DLLs (for example, `APIMatic.Core.dll` required by `PayPalServerSDK`) are included in the `.nupkg` under `lib/net9.0`.
+then your package is missing transitive dependencies. Ensure that required third-party DLLs (for example, `APIMatic.Core.dll` required by `PayPalServerSDK`) are included in the `.nupkg` under `lib/net10.0`.
 
 Packaging file: `Package/GIBS.Module.GiftCert.nuspec`
 
 ## Development
 
 - Open the solution in Visual Studio.
-- Ensure you are targeting the same Oqtane version as production (`6.2.1`).
+- Ensure you are targeting the same Oqtane version as production (`10.2.1`).
 - Build in `Release` before generating the installation package.
 
 ## License

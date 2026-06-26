@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Version>1.0.2</Version>
-    <Authors>GIBS</Authors>
+    <Version>10.1.0</Version>
+    <Authors>Joseph M Aucoin</Authors>
     <Company>GIBS</Company>
     <Description>Gift Certificate</Description>
     <Product>GIBS.Module.GiftCert</Product>
@@ -17,11 +17,18 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.9" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.9" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.9" />
-    <PackageReference Include="System.Net.Http.Json" Version="10.0.5" />
-    <PackageReference Include="Oqtane.Client" Version="10.2.1" />
-    <PackageReference Include="Oqtane.Shared" Version="10.2.1" />
+    <PackageReference Include="Oqtane.Licensing" Version="5.1.0" />
     <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="MimeKit" Version="4.17.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Oqtane.Client">
+      <HintPath>..\..\oqtane.framework\Oqtane.Server\bin\Debug\net10.0\Oqtane.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Oqtane.Shared">
+      <HintPath>..\..\oqtane.framework\Oqtane.Server\bin\Debug\net10.0\Oqtane.Shared.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

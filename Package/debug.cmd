@@ -8,4 +8,7 @@ XCOPY "..\Server\bin\Debug\%TargetFramework%\%ProjectName%.Server.Oqtane.dll" ".
 XCOPY "..\Server\bin\Debug\%TargetFramework%\%ProjectName%.Server.Oqtane.pdb" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\%TargetFramework%\" /Y
 XCOPY "..\Shared\bin\Debug\%TargetFramework%\%ProjectName%.Shared.Oqtane.dll" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\%TargetFramework%\" /Y
 XCOPY "..\Shared\bin\Debug\%TargetFramework%\%ProjectName%.Shared.Oqtane.pdb" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\%TargetFramework%\" /Y
+XCOPY "..\Client\bin\Debug\%TargetFramework%\Oqtane.Licensing.Client.Oqtane.dll" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\%TargetFramework%\" /Y
+XCOPY "..\Client\bin\Debug\%TargetFramework%\Oqtane.Licensing.Server.Oqtane.dll" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\%TargetFramework%\" /Y
+XCOPY "..\Client\bin\Debug\%TargetFramework%\Oqtane.Licensing.Shared.Oqtane.dll" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\bin\Debug\%TargetFramework%\" /Y
 XCOPY "..\Server\wwwroot\*" "..\..\oqtane.framework-6.2.1-Source\Oqtane.Server\wwwroot\Modules\%ProjectName%\" /Y /S /I
